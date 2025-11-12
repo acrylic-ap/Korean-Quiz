@@ -1,6 +1,17 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import localFont from "next/font/local";
+
+const cafe24OnePrettyNight = localFont({
+  src: [
+    {
+      path: "../public/fonts/Cafe24OnePrettyNight/Cafe24OnePrettyNight.ttf",
+      weight: "400",
+      style: "normal",
+    },
+  ],
+});
 
 export const metadata: Metadata = {
   title: "한국어 퀴즈",
@@ -13,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={cafe24OnePrettyNight.className}>
       <body>{children}</body>
     </html>
   );

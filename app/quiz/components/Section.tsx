@@ -9,5 +9,9 @@ const QuizSection = styled.div`
 `;
 
 export default function Section() {
-  return <QuizSection>asdf</QuizSection>;
+  return (
+    <QuizSection>
+      <></>
+    </QuizSection>
+  );
 }

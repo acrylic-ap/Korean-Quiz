@@ -9,5 +9,9 @@ const QuizFooter = styled.div`
 `;
 
 export default function Footer() {
-  return <QuizFooter>asdf</QuizFooter>;
+  return (
+    <QuizFooter>
+      <></>
+    </QuizFooter>
+  );
 }
