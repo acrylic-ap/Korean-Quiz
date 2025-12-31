@@ -47,9 +47,15 @@ const TagButton = styled(ButtonImage)``;
 const TagElementContainer = styled.div`
   margin-left: 5px;
 
+  width: 180px;
+  flex-shrink: 0;
+
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+
+  overflow-x: auto;
+  overflow-y: hidden;
 `;
 
 const Tag = styled.div`
@@ -65,10 +71,12 @@ const Tag = styled.div`
   color: black;
   font-size: 12pt;
   font-weight: 500;
+  white-space: nowrap;
 
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 `;
 
 const ArtContentContainer = styled.div`
@@ -151,6 +159,7 @@ export default function Section() {
           {tagActive && (
             <TagElementContainer>
               <Tag>초급</Tag>
+              <Tag>어휘</Tag>
               <Tag>어휘</Tag>
             </TagElementContainer>
           )}
