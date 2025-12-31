@@ -85,6 +85,11 @@ export default function Header() {
     };
   }, [started]);
 
+  const listOpening = () => {
+    setListOpen(true);
+    setStarted(false);
+  };
+
   return (
     <QuizHeader>
       <LogoContainer>
@@ -106,7 +111,7 @@ export default function Header() {
         </TimeControl>
       </TimeContainer>
       <ListContainer>
-        <ListButton onClick={() => setListOpen(!listOpen)}>
+        <ListButton onClick={() => listOpening()}>
           <ListIcon />
         </ListButton>
       </ListContainer>

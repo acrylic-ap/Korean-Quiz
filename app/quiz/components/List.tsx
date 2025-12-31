@@ -1,11 +1,12 @@
 "use client";
 
-import { listOpenState } from "@/app/atom/quizAtom";
+import { listOpenState, startedState } from "@/app/atom/quizAtom";
 import { Bookmark, Category, Close, Help } from "@/public/svgs/ListSVG";
+import { AnimatePresence, motion } from "framer-motion";
 import { useAtom } from "jotai";
 import styled from "styled-components";
 
-const QuizList = styled.div`
+const QuizList = styled(motion.div)`
   background-color: rgba(0, 0, 0, 0.5);
 
   position: absolute;
@@ -21,7 +22,7 @@ const QuizList = styled.div`
   z-index: 1;
 `;
 
-const ListContainer = styled.div`
+const ListContainer = styled(motion.div)`
   background-color: white;
 
   position: absolute;
@@ -68,6 +69,7 @@ const ListButton = styled.button`
   align-items: center;
 
   margin-right: 15px;
+  margin-bottom: 5px;
 `;
 
 const ListButtonText = styled.p`
@@ -80,35 +82,53 @@ const ListButtonText = styled.p`
 
 export default function List() {
   const [listOpen, setListOpen] = useAtom(listOpenState);
+  const [, setStarted] = useAtom(startedState);
 
-  if (!listOpen) {
-    return null;
-  }
+  const listClosing = () => {
+    setListOpen(false);
+    setStarted(true);
+  };
 
   return (
-    <QuizList>
-      <ListContainer>
-        <ListCloseButton onClick={() => setListOpen(!listOpen)}>
-          <Close />
-        </ListCloseButton>
+    <AnimatePresence>
+      {listOpen && (
+        <QuizList
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <ListContainer
+            initial={{ x: "100%" }}
+            /* 3. 나타날 때 상태 (제자리) */
+            animate={{ x: 0 }}
+            /* 4. 사라질 때 상태 (다시 오른쪽 밖으로) */
+            exit={{ x: "100%" }}
+            /* 5. 애니메이션 세부 설정 (속도, 탄성 등) */
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+          >
+            <ListCloseButton onClick={() => listClosing()}>
+              <Close />
+            </ListCloseButton>
 
-        <ListButtonContainer>
-          <ListButton>
-            <ListButtonText>북마크</ListButtonText>
-            <Bookmark />
-          </ListButton>
+            <ListButtonContainer>
+              <ListButton>
+                <ListButtonText>북마크</ListButtonText>
+                <Bookmark />
+              </ListButton>
 
-          <ListButton>
-            <ListButtonText>카테고리</ListButtonText>
-            <Category />
-          </ListButton>
+              <ListButton>
+                <ListButtonText>카테고리</ListButtonText>
+                <Category />
+              </ListButton>
 
-          <ListButton>
-            <ListButtonText>도움말</ListButtonText>
-            <Help />
-          </ListButton>
-        </ListButtonContainer>
-      </ListContainer>
-    </QuizList>
+              <ListButton>
+                <ListButtonText>도움말</ListButtonText>
+                <Help />
+              </ListButton>
+            </ListButtonContainer>
+          </ListContainer>
+        </QuizList>
+      )}
+    </AnimatePresence>
   );
 }

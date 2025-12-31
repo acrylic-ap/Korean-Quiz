@@ -5,6 +5,8 @@ import Header from "./Header";
 import Section from "./Section";
 import Footer from "./Footer";
 import List from "./components/List";
+import { useAtom } from "jotai";
+import { startedState } from "../atom/quizAtom";
 
 const QuizBackground = styled.div`
   position: relative;
@@ -14,10 +16,12 @@ const QuizBackground = styled.div`
 `;
 
 export default function Quiz() {
+  const [started, setStarted] = useAtom(startedState);
+
   return (
     <QuizBackground>
       <Header />
-      <Section />
+      {started && <Section />}
       <Footer />
       <List />
     </QuizBackground>
