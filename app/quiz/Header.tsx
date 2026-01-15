@@ -95,7 +95,7 @@ export default function Header() {
       <LogoContainer>
         <Logo>
           <Image
-            src="/assets/images/logo/Logo.png"
+            src="/images/logo/Logo.png"
             alt="평명"
             width={80}
             height={30}

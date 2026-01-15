@@ -94,10 +94,10 @@ export default function InfoModal() {
 
         <LogoContainer>
           <Image
-            src="/assets/images/logo/Logo.png"
+            src="/images/logo/Logo.png"
             alt="평명"
             width={67}
-            height={27.19}
+            height={27}
             style={{ objectFit: "contain" }}
             priority
           />

@@ -1,7 +1,12 @@
 import { atom } from 'jotai';
+import { questionData } from '../data/quiz_data';
 
 export const timeState = atom<number>(0);
 export const startedState = atom<boolean>(true);
+
+export const questionState = atom<questionData | null>(null);
+export const viewedQuizState = atom<Set<number>>(new Set<number>());
+
 export const answerState = atom<string>('');
 export const hintState = atom<string>("그림에 답이 있습니다.");
 export const hintCountState = atom<number>(1);
@@ -9,6 +14,7 @@ export const hintCountState = atom<number>(1);
 export const listOpenState = atom<boolean>(false);
 
 interface ConfirmModal {
+    type?: 'default' | 'danger';
     content: string;
     onConfirm: () => void;
     onCancel: () => void;

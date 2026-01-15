@@ -6,8 +6,11 @@ import {
   hintCountState,
   hintState,
   infoConfigState,
+  questionState,
+  viewedQuizState,
 } from "../atom/quizAtom";
 import { useAtom } from "jotai";
+import { selectQuestion } from "./tools/select_question";
 
 const QuizFooter = styled.div`
   width: 100%;
@@ -39,6 +42,8 @@ export default function Footer() {
   const [, setAlertConfig] = useAtom(confirmConfigState);
   const [infoConfig, setInfoConfig] = useAtom(infoConfigState);
   const [hintCount, setHintCount] = useAtom(hintCountState);
+  const [viewedQuiz, setViewedQuiz] = useAtom(viewedQuizState);
+  const [question, setQuestion] = useAtom(questionState);
   const [hint] = useAtom(hintState);
 
   const handleShowHint = () => {
@@ -64,10 +69,11 @@ export default function Footer() {
 
   const handlePassCheck = () => {
     setAlertConfig({
+      type: "danger",
       content: `정말로 넘기시겠습니까?
 기존에 작업한 내용은 저장되지 않습니다!`,
       onConfirm: () => {
-        console.log("넘김");
+        setQuestion(selectQuestion(viewedQuiz, setViewedQuiz));
         setAlertConfig(null);
       },
       onCancel: () => {

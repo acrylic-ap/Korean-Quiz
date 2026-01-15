@@ -80,14 +80,19 @@ const Button = styled.button`
   font-size: 16px;
 `;
 
-const OkayButton = styled(Button)`
-  background-color: #256ef4;
+const ActionButton = styled(Button)`
+  background-color: #d52e7c;
   border: none;
   color: white;
 `;
 
 export default function ConfirmModal() {
   const [confirmModalProps, setConfirmModalProps] = useAtom(confirmConfigState);
+
+  const isDanger = confirmModalProps?.type === "danger";
+
+  const ConfirmButton = isDanger ? Button : ActionButton;
+  const CancelButton = isDanger ? ActionButton : Button;
 
   if (!confirmModalProps) return null;
 
@@ -100,10 +105,10 @@ export default function ConfirmModal() {
 
         <LogoContainer>
           <Image
-            src="/assets/images/logo/Logo.png"
+            src="/images/logo/Logo.png"
             alt="평명"
             width={67}
-            height={27.19}
+            height={27}
             style={{ objectFit: "contain" }}
             priority
           />
@@ -112,10 +117,12 @@ export default function ConfirmModal() {
         <ContentText>{confirmModalProps.content}</ContentText>
 
         <ButtonContainer>
-          <Button onClick={() => confirmModalProps.onCancel()}>취소</Button>
-          <OkayButton onClick={() => confirmModalProps.onConfirm()}>
+          <CancelButton onClick={() => confirmModalProps.onCancel()}>
+            취소
+          </CancelButton>
+          <ConfirmButton onClick={() => confirmModalProps.onConfirm()}>
             확인
-          </OkayButton>
+          </ConfirmButton>
         </ButtonContainer>
       </ModalContent>
     </ModalOverlay>

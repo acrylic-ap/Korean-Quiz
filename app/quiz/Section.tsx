@@ -1,11 +1,26 @@
 "use client";
 
 import { Bookmark, DisabledBookmark } from "@/public/svgs/ListSVG";
-import { Draw, ToggleTag, Write } from "@/public/svgs/QuizSVG";
-import { useState } from "react";
+import {
+  Correct,
+  Divider,
+  Draw,
+  ToggleTag,
+  Write,
+  Wrong,
+} from "@/public/svgs/QuizSVG";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { answerState } from "../atom/quizAtom";
+import {
+  answerState,
+  questionState,
+  timeState,
+  viewedQuizState,
+} from "../atom/quizAtom";
 import { useAtom } from "jotai";
+import { selectQuestion } from "./tools/select_question";
+import { formatNumber } from "./tools/format_number";
+import { parseTextStyle } from "./tools/parse_text_style";
 
 const QuizSection = styled.div`
   width: 100%;
@@ -33,6 +48,7 @@ const ButtonImage = styled.button`
   align-items: center;
 `;
 
+/* Tag */
 const TagContainer = styled.div`
   position: absolute;
   left: 10px;
@@ -42,6 +58,7 @@ const TagContainer = styled.div`
   display: flex;
   align-items: center;
 `;
+
 const TagButton = styled(ButtonImage)``;
 
 const TagElementContainer = styled.div`
@@ -56,6 +73,13 @@ const TagElementContainer = styled.div`
 
   overflow-x: auto;
   overflow-y: hidden;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  .hide-scroll::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const Tag = styled.div`
@@ -63,14 +87,13 @@ const Tag = styled.div`
   height: 28px;
 
   margin-right: 5px;
-  padding: 0px 13px;
+  padding: 0px 15px;
 
-  border: 2px solid black;
+  border: 1px solid black;
   border-radius: 7px;
 
   color: black;
-  font-size: 12pt;
-  font-weight: 500;
+  font-size: 10pt;
   white-space: nowrap;
 
   display: flex;
@@ -79,6 +102,7 @@ const Tag = styled.div`
   flex-shrink: 0;
 `;
 
+/* Art Content */
 const ArtContentContainer = styled.div`
   position: absolute;
   right: 18px;
@@ -102,6 +126,7 @@ const QuizContainer = styled.div`
   flex-direction: column;
 `;
 
+/* Title */
 const QuizTitleContainer = styled.div`
   margin-bottom: 20px;
 
@@ -115,6 +140,7 @@ const QuizTitleNumber = styled.h1`
   font-size: 23pt;
   font-weight: 600;
 `;
+
 const QuizTitleContent = styled.h1`
   width: 65%;
 
@@ -124,33 +150,115 @@ const QuizTitleContent = styled.h1`
   font-weight: 400;
 `;
 
+const QuizTitleText = styled.span<{ $bold?: boolean; $italic?: boolean }>`
+  font-weight: ${({ $bold }) => ($bold ? 700 : 400)};
+  font-style: ${({ $italic }) => ($italic ? "italic" : "normal")};
+`;
+
+/* Option */
 const OptionContainer = styled.div`
   margin-left: 30px;
 
   display: flex;
   flex-direction: column;
 `;
-const OptionContentContainer = styled.div<{ isActive: boolean }>`
+
+const OptionContentContainer = styled.div<{ $isActive: boolean }>`
+  width: 90%;
+
   display: flex;
 
   margin-bottom: 20px;
 
-  color: ${(props) => (props.isActive ? "#d52e7c" : "black")};
+  color: ${({ $isActive }) => ($isActive ? "#d52e7c" : "black")};
 `;
+
 const OptionNumber = styled.div`
   margin-right: 5px;
 
   font-size: 15pt;
 `;
+
 const OptionDescription = styled.div`
   font-size: 15pt;
+`;
+
+const SelectAnswer = styled.div`
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+
+  margin-left: 15;
+  margin-top: 0;
+`;
+
+const DividerContainer = styled.div``;
+
+const CorrectButton = styled.div``;
+
+const WrongButton = styled.div``;
+
+const InputAnswer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  width: 100%;
+
+  margin-left: 15;
+  margin-top: 0;
+`;
+
+const Guide = styled.p`
+  width: 80%;
+
+  font-size: 17px;
+`;
+
+const Input = styled.input`
+  height: 50px;
+  width: 80%;
+
+  border-color: #888888;
+  border-radius: 10px;
+  border-width: 1px;
+
+  padding-left: 10px;
+
+  color: #888888;
+
+  font-family: "Cafe24Oneprettynight";
+  font-size: 16px;
+
+  outline: none;
 `;
 
 export default function Section() {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [tagActive, setTagActive] = useState(false);
-  const [quizType] = useState("select");
   const [quizAnswer, setQuizAnswer] = useAtom(answerState);
+  const [question, setQuestion] = useAtom(questionState);
+  const [viewedQuiz, setViewedQuiz] = useAtom(viewedQuizState);
+  const [, setTime] = useAtom(timeState);
+
+  const handleQuizAnswerChange = (e: any) => {
+    setQuizAnswer(e.target.value);
+  };
+
+  useEffect(() => {
+    setQuestion(selectQuestion(viewedQuiz, setViewedQuiz));
+  }, []);
+
+  useEffect(() => {
+    setQuizAnswer("");
+    setTime(0);
+  }, [question]);
+
+  if (!question) return null;
 
   return (
     <QuizSection>
@@ -161,9 +269,9 @@ export default function Section() {
           </TagButton>
           {tagActive && (
             <TagElementContainer>
-              <Tag>초급</Tag>
-              <Tag>어휘</Tag>
-              <Tag>어휘</Tag>
+              {question.tag.map((tag) => {
+                return <Tag>{tag}</Tag>;
+              })}
             </TagElementContainer>
           )}
         </TagContainer>
@@ -182,52 +290,63 @@ export default function Section() {
 
       <QuizContainer>
         <QuizTitleContainer>
-          <QuizTitleNumber>01</QuizTitleNumber>
+          <QuizTitleNumber>
+            {formatNumber(question.questionNumber)}
+          </QuizTitleNumber>
           <QuizTitleContent>
-            어떤 일을 몹시 즐겨서 거기에 빠지다. 이를 의미하는 단어는?
+            {parseTextStyle(question.question).map((part, index) => (
+              <QuizTitleText
+                key={index}
+                $bold={part.bold}
+                $italic={part.italic}
+              >
+                {part.text}
+              </QuizTitleText>
+            ))}
           </QuizTitleContent>
         </QuizTitleContainer>
 
-        {quizType == "select" && (
+        {question.type == "multiple-choice" ? (
           <OptionContainer>
-            <OptionContentContainer
-              onClick={() => setQuizAnswer("1")}
-              isActive={quizAnswer === "1"}
-            >
-              <OptionNumber>①</OptionNumber>
-              <OptionDescription>
-                가는 말이 고와야 오는 말도 곱다.
-              </OptionDescription>
-            </OptionContentContainer>
-            <OptionContentContainer
-              onClick={() => setQuizAnswer("2")}
-              isActive={quizAnswer === "2"}
-            >
-              <OptionNumber>②</OptionNumber>
-              <OptionDescription>발 없는 말이 천 리 간다.</OptionDescription>
-            </OptionContentContainer>
-            <OptionContentContainer
-              onClick={() => setQuizAnswer("3")}
-              isActive={quizAnswer === "3"}
-            >
-              <OptionNumber>③</OptionNumber>
-              <OptionDescription>제 버릇 개 줄까.</OptionDescription>
-            </OptionContentContainer>
-            <OptionContentContainer
-              onClick={() => setQuizAnswer("4")}
-              isActive={quizAnswer === "4"}
-            >
-              <OptionNumber>④</OptionNumber>
-              <OptionDescription>소 잃고 외양간 고친다.</OptionDescription>
-            </OptionContentContainer>
-            <OptionContentContainer
-              onClick={() => setQuizAnswer("5")}
-              isActive={quizAnswer === "5"}
-            >
-              <OptionNumber>⑤</OptionNumber>
-              <OptionDescription>꿈보다 해몽이 좋다.</OptionDescription>
-            </OptionContentContainer>
+            {question.options?.map((option, index) => {
+              const answerNumber = String(index + 1);
+
+              return (
+                <OptionContentContainer
+                  key={index}
+                  onClick={() => setQuizAnswer(answerNumber)}
+                  $isActive={quizAnswer === answerNumber}
+                >
+                  <OptionNumber>
+                    {String.fromCharCode(9312 + index)}
+                  </OptionNumber>
+                  <OptionDescription>{option}</OptionDescription>
+                </OptionContentContainer>
+              );
+            })}
           </OptionContainer>
+        ) : question.type == "text-input" ? (
+          <InputAnswer>
+            <Guide>{question.guide}</Guide>
+            <Input
+              value={quizAnswer}
+              onChange={handleQuizAnswerChange}
+              type="text"
+              placeholder="정답을 입력해 주세요"
+            />
+          </InputAnswer>
+        ) : (
+          <SelectAnswer>
+            <CorrectButton onClick={() => setQuizAnswer("O")}>
+              <Correct lineColor={quizAnswer == "O" ? "#E04E92" : "#FFC7E2"} />
+            </CorrectButton>
+            <DividerContainer>
+              <Divider lineColor={quizAnswer ? "#E04E92" : "#FFC7E2"} />
+            </DividerContainer>
+            <WrongButton onClick={() => setQuizAnswer("X")}>
+              <Wrong lineColor={quizAnswer == "X" ? "#E04E92" : "#FFC7E2"} />
+            </WrongButton>
+          </SelectAnswer>
         )}
       </QuizContainer>
     </QuizSection>
