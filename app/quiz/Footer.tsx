@@ -12,6 +12,7 @@ import {
 } from "../atom/quizAtom";
 import { useAtom } from "jotai";
 import { selectQuestion } from "./tools/select_question";
+import { Clue } from "@/public/svgs/QuizSVG";
 
 const QuizFooter = styled.div`
   width: 100%;
@@ -35,6 +36,38 @@ const Button = styled.button`
   border-radius: 5px;
 
   font-size: 16px;
+`;
+
+const HintButton = styled(Button)`
+  width: 100%;
+  height: 100%;
+
+  margin: none;
+`;
+
+const HintContainer = styled.div`
+  position: relative;
+  width: 30%;
+  height: 40px;
+
+  margin-right: 10px;
+  margin-bottom: 15px;
+`;
+
+const HintContent = styled.div`
+  position: absolute;
+  top: -40px;
+
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+`;
+
+const HintCount = styled.p`
+  margin-left: 5px;
 `;
 
 const AnswerButton = styled(Button)``;
@@ -129,7 +162,13 @@ export default function Footer() {
 
   return (
     <QuizFooter>
-      <Button onClick={handleHintCheck}>힌트</Button>
+      <HintContainer>
+        <HintContent>
+          <Clue />
+          <HintCount>{hintCount}</HintCount>
+        </HintContent>
+        <HintButton onClick={handleHintCheck}>힌트</HintButton>
+      </HintContainer>
       <AnswerButton onClick={handleAnswerCheck}>정답 확인</AnswerButton>
       <Button onClick={handlePassCheck}>넘기기</Button>
     </QuizFooter>
