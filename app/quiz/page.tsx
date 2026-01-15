@@ -16,7 +16,7 @@ const QuizBackground = styled.div`
 `;
 
 export default function Quiz() {
-  const [started, setStarted] = useAtom(startedState);
+  const [started] = useAtom(startedState);
 
   return (
     <QuizBackground>

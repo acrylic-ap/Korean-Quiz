@@ -329,8 +329,7 @@ export default function Section() {
   useEffect(() => {
     setQuizAnswer("");
     setTime(0);
-    if (question?.hint) setHint(question.hint);
-    else setHint("힌트가 없습니다.");
+    setHint(question?.hint);
   }, [question]);
 
   if (!question) return null;

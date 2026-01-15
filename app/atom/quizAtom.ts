@@ -8,7 +8,7 @@ export const questionState = atom<questionData | null>(null);
 export const viewedQuizState = atom<Set<number>>(new Set<number>());
 
 export const answerState = atom<string>('');
-export const hintState = atom<string>("그림에 답이 있습니다.");
+export const hintState = atom<string | undefined>(undefined);
 export const hintCountState = atom<number>(1);
 
 export const listOpenState = atom<boolean>(false);

@@ -49,12 +49,21 @@ export default function Footer() {
   const [answer] = useAtom(answerState);
 
   const handleShowHint = () => {
-    setInfoConfig({
-      content: hint,
-      onClose: () => {
-        setInfoConfig(null);
-      },
-    });
+    if (!hint) {
+      setInfoConfig({
+        content: "힌트가 없습니다.",
+        onClose: () => {
+          setInfoConfig(null);
+        },
+      });
+    } else {
+      setInfoConfig({
+        content: hint,
+        onClose: () => {
+          setInfoConfig(null);
+        },
+      });
+    }
   };
 
   const handleAnswerCheck = () => {
