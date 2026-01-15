@@ -6,7 +6,7 @@ export interface questionData {
   rationale?: string[];
   correctAnswer: number | string;
   commentary: string;
-  hint: string;
+  hint?: string;
   image?: any;
   tag: string[];
   description?: string;
@@ -99,7 +99,6 @@ export const questionData: questionData[] = [
     commentary: `우리나라가 2년 만(에/의) 월드컵에서 우승하였다.
 월드컵이 2년 만에 개최됐다는 것이 중점이면, 관형격 조사 '의'가 붙어 월드컵을 수식해야 합니다.
 한편, '에'로 쓴다면 우리나라가 월드컵에서 우승한 것이 2년 만이라는 의미입니다.`,
-    hint: "힌트가 없습니다.",
     guide: `우리나라가 2년 만(에/의) 월드컵에서 우승하였다.`,
     tag: ["어려움", "일반", "조사"],
   },
@@ -180,7 +179,6 @@ export const questionData: questionData[] = [
     correctAnswer: "O",
     commentary: `수사법에서의 대구는 [대구]가 아니고 [대꾸]로 발음합니다.
 다만, 물고기 종류를 의미하는 대구는 [대구]로 발음합니다.`,
-    hint: "힌트가 없습니다.",
     tag: ["보통", "일반", "음운 변동"],
   },
   {
@@ -190,7 +188,6 @@ export const questionData: questionData[] = [
     correctAnswer: "X",
     commentary: `2, 3, 5 등을 의미하는 소수의 발음은 [소쑤]입니다.
 0.1, 0.5와 같은 소수가 [소수]로 발음됩니다.`,
-    hint: "힌트가 없습니다.",
     tag: ["보통", "일반", "음운 변동"],
   },
 ];

@@ -327,10 +327,10 @@ export default function Section() {
   }, []);
 
   useEffect(() => {
-    console.log("?");
     setQuizAnswer("");
     setTime(0);
-    if (question) setHint(question.hint);
+    if (question?.hint) setHint(question.hint);
+    else setHint("힌트가 없습니다.");
   }, [question]);
 
   if (!question) return null;
