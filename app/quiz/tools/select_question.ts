@@ -1,4 +1,3 @@
-import { viewedQuizState } from "@/app/atom/quizAtom";
 import { questionData } from "@/app/data/quiz_data";
 import { SetStateAction } from "jotai";
 
@@ -10,10 +9,9 @@ export const selectQuestion = (
   let unviewed = questionData.filter(
     (q) => !viewedQuiz.has(q.questionNumber)
   );
-  
-  console.log(unviewed)
-  
+    
   if (unviewed.length === 0) {
+    // 모든 문제를 열람했을 때 이스터에그 기능 추가 예정
     setViewedQuiz(new Set());
     unviewed = questionData;
   }
