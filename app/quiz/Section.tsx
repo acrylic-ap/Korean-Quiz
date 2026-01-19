@@ -183,7 +183,10 @@ const OptionContainer = styled.div`
   flex-direction: column;
 `;
 
-const OptionContentContainer = styled.button<{ $isActive: boolean }>`
+const OptionContentContainer = styled.button<{
+  $isActive: boolean;
+  $correctNumber: boolean;
+}>`
   background-color: transparent;
   border: none;
 
@@ -194,7 +197,8 @@ const OptionContentContainer = styled.button<{ $isActive: boolean }>`
   margin-bottom: 20px;
 
   text-align: left;
-  color: ${({ $isActive }) => ($isActive ? "#949494" : "black")};
+  color: ${({ $isActive, $correctNumber }) =>
+    $correctNumber ? "#D52E7C" : $isActive ? "#949494" : "black"};
 `;
 
 const OptionNumber = styled.div`
@@ -279,8 +283,10 @@ const Input = styled.input`
 
 export const MultipleChoice = ({
   options,
+  correctNumber,
 }: {
   options: string[] | undefined;
+  correctNumber: number | string;
 }) => {
   if (options === undefined) return null;
 
@@ -291,12 +297,17 @@ export const MultipleChoice = ({
     <OptionContainer>
       {options.map((option, index) => {
         const answerNumber = String(index + 1);
+        const isCorrect =
+          typeof correctNumber === "number"
+            ? Number(answerNumber) === correctNumber
+            : answerNumber === correctNumber;
 
         return (
           <OptionContentContainer
             key={index}
             onClick={() => setQuizAnswer(answerNumber)}
             $isActive={quizAnswer === answerNumber}
+            $correctNumber={showResult && isCorrect}
             disabled={showResult}
           >
             <OptionNumber>{String.fromCharCode(9312 + index)}</OptionNumber>
@@ -381,6 +392,11 @@ export default function Section() {
 
   if (!question) return null;
 
+  const isCorrect =
+    typeof question.correctAnswer === "number"
+      ? Number(question.correctAnswer) === Number(quizAnswer)
+      : question.correctAnswer === quizAnswer;
+
   return (
     <QuizSection $started={started} $showResult={showResult}>
       <QuizContent>
@@ -415,11 +431,7 @@ export default function Section() {
             {formatNumber(question.questionNumber)}
             {showResult && (
               <MarkupContainer>
-                {question.correctAnswer === quizAnswer ? (
-                  <CorrectAnswer />
-                ) : (
-                  <WrongAnswer />
-                )}
+                {isCorrect ? <CorrectAnswer /> : <WrongAnswer />}
               </MarkupContainer>
             )}
           </QuizTitleNumber>
@@ -437,7 +449,10 @@ export default function Section() {
         </QuizTitleContainer>
 
         {question.type == "multiple-choice" ? (
-          <MultipleChoice options={question.options} />
+          <MultipleChoice
+            options={question.options}
+            correctNumber={question.correctAnswer}
+          />
         ) : question.type == "text-input" ? (
           <TextInput guide={question.guide} />
         ) : question.type == "ox" ? (

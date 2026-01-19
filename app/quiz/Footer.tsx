@@ -185,7 +185,9 @@ export default function Footer() {
           <Button onClick={handlePassCheck}>넘기기</Button>
         </>
       ) : (
-        <></>
+        <>
+          <AnswerButton onClick={handleAnswerCheck}>정답 확인</AnswerButton>
+        </>
       )}
     </QuizFooter>
   );

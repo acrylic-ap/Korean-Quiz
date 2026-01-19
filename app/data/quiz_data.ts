@@ -27,7 +27,7 @@ export const questionData: questionData[] = [
       "안녕은 발음이 [안녕]이므로 음운 변동이 일어나지 않습니다.",
     ],
     hint: "교체는 음운의 개수가 변하지 않습니다.",
-    correctAnswer: "4",
+    correctAnswer: 4,
     commentary: `문항 번호 밑에 있는 설명을 보시면 됩니다.`,
     tag: ["보통", "고등", "음운 변동", "탈락"],
   },
@@ -42,7 +42,7 @@ export const questionData: questionData[] = [
       "소 잃고 외양간 고친다",
       "꿈보다 해몽이 좋다",
     ],
-    correctAnswer: "4",
+    correctAnswer: 4,
     commentary: `'소 잃고 외양간 고친다'라는 말이 나오게 된 배경을 보면 했어야 할 일을 제때 하지 않고 사건이 일어난 후에 해결하는 모습이 떠오릅니다.
 일이 잘못된 후에는 다시 되돌릴 수 없다는 의미를 가지고 있습니다.
 사진을 보시면 소는 이미 나와 있는데 외양간을 고치려는 모습을 볼 수 있습니다. 그래서 정답은 4번이 되겠습니다.`,
@@ -61,7 +61,7 @@ export const questionData: questionData[] = [
       "깊고 깊다.",
       "마음으로 받아들여 깨닫다.",
     ],
-    correctAnswer: "3",
+    correctAnswer: 3,
     commentary: `과거에 유명했던 어휘력 부족으로 인한 세대 간의 갈등을 보여 주는 예입니다.
 어떤 표현이 있을 때에는 자신이 알고 있는 어휘 내에서만 파악하려 하기보단 상대방의 의도가 무엇인지를 파악하는 게 중요합니다.
 문장을 해석하실 때는 상황 맥락과 문장의 내용을 보고 다른 의미가 있지 않을까 생각해 보았으면 합니다.`,
@@ -107,7 +107,7 @@ export const questionData: questionData[] = [
     question: "다음 중 표준어가 /*아닌*/ 것은?",
     type: "multiple-choice",
     options: ["준수", "엔간하다", "밥도둑", "쳐먹다", "대관절"],
-    correctAnswer: "4",
+    correctAnswer: 4,
     commentary: `①②③⑤ 준수, 엔간하다, 밥도둑, 대관절은 모두 표준어입니다.
 ④ '쳐먹다'는 '처먹다'의 잘못입니다. 접두사 '처-'에 '먹다'가 결합된 구성이 바람직합니다.`,
     hint: "단어 중 사전에 등재되지 않은 접사가 있습니다.",
@@ -136,7 +136,7 @@ export const questionData: questionData[] = [
       "이지석이 이지적이지 않은지는 잘 모르겠다.",
       "강승훈은 실력과 외모가 높아 사람들에게 인정받았다.",
     ],
-    correctAnswer: "5",
+    correctAnswer: 5,
     commentary: `⑤ 강승훈은 실력과 외모가 높아 사람들에게 인정받았다.
 외모는 높다고 표현할 수 없습니다.
 둘을 문장상에 두고 싶다면 실력이 높고 외모가 출중하다와 같이 쓰셔야 합니다.`,
@@ -154,7 +154,7 @@ export const questionData: questionData[] = [
       "괴로웠던 사나이 / 행복한 예수 그리스도에게처럼",
       "뼈에 저리도록 생활은 슬퍼도 좋다.",
     ],
-    correctAnswer: "5",
+    correctAnswer: 5,
     commentary: `⑤ '생활은 슬퍼도 좋다' 부분에서 반어법이 사용되었습니다.
 슬픔과 좋다는 서로 양립할 수 없으나 이 표현을 토대로 고통스러운 현실 속에서도 절망하지 않는 의지를 드러냅니다.`,
     hint: "역설은 일반적인 경우에는 모순되지 않지만 특정한 경우에서 논리적 모순을 드러내 표현하지만 반어는 현재 실정과 반대되는 뜻의 말을 통해 표현합니다.",
@@ -166,7 +166,7 @@ export const questionData: questionData[] = [
     question: "다음 중 강조법이 /*아닌*/ 것은?",
     type: "multiple-choice",
     options: ["과장법", "미화법", "대구법", "영탄법", "점강법"],
-    correctAnswer: "3",
+    correctAnswer: 3,
     commentary: `대구법은 비슷한 가락을 짝지어 표현하므로 변화법입니다.
 변화법은 문장의 단조로움을 피하려고 쓰는 표현법입니다.`,
     hint: "위 표현법 사이에 변화법이 존재합니다.",
