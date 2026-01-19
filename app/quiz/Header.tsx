@@ -5,7 +5,12 @@ import Image from "next/image";
 import { ListIcon, PauseIcon, PlayIcon } from "@/public/svgs/HeaderSVG";
 import { useEffect, useState } from "react";
 import { formatTime } from "./tools/format_time";
-import { listOpenState, startedState, timeState } from "../atom/quizAtom";
+import {
+  listOpenState,
+  showResultState,
+  startedState,
+  timeState,
+} from "../atom/quizAtom";
 import { useAtom } from "jotai";
 
 const QuizHeader = styled.div`
@@ -72,6 +77,7 @@ export default function Header() {
   const [time, setTime] = useAtom(timeState);
   const [started, setStarted] = useAtom(startedState);
   const [, setListOpen] = useAtom(listOpenState);
+  const [showResult] = useAtom(showResultState);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -106,9 +112,11 @@ export default function Header() {
       </LogoContainer>
       <TimeContainer>
         <Time>{formatTime(time)}</Time>
-        <TimeControl onClick={() => setStarted(!started)}>
-          {started ? <PauseIcon /> : <PlayIcon />}
-        </TimeControl>
+        {!showResult && (
+          <TimeControl onClick={() => setStarted(!started)}>
+            {started ? <PauseIcon /> : <PlayIcon />}
+          </TimeControl>
+        )}
       </TimeContainer>
       <ListContainer>
         <ListButton onClick={() => listOpening()}>

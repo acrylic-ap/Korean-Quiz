@@ -3,11 +3,13 @@
 import { Bookmark, DisabledBookmark } from "@/public/svgs/ListSVG";
 import {
   Correct,
+  CorrectAnswer,
   Divider,
   Draw,
   ToggleTag,
   Write,
   Wrong,
+  WrongAnswer,
 } from "@/public/svgs/QuizSVG";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
@@ -15,6 +17,7 @@ import {
   answerState,
   hintState,
   questionState,
+  showResultState,
   startedState,
   timeState,
   viewedQuizState,
@@ -24,11 +27,12 @@ import { selectQuestion } from "./tools/select_question";
 import { formatNumber } from "./tools/format_number";
 import { parseTextStyle } from "./tools/parse_text_style";
 
-const QuizSection = styled.div<{ $started: boolean }>`
+const QuizSection = styled.div<{ $started: boolean; $showResult: boolean }>`
   width: 100%;
   height: 80%;
 
-  display: ${({ $started }) => ($started ? "block" : "none")};
+  display: ${({ $started, $showResult }) =>
+    $started || $showResult ? "block" : "none"};
 `;
 
 const QuizContent = styled.div`
@@ -141,14 +145,24 @@ const QuizTitleContainer = styled.div`
 `;
 
 const QuizTitleNumber = styled.h1`
+  position: relative;
+
   margin-left: 30px;
 
   font-size: 23pt;
   font-weight: 600;
 `;
 
+const MarkupContainer = styled.div`
+  position: absolute;
+
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
 const QuizTitleContent = styled.h1`
-  width: 65%;
+  width: 80%;
 
   margin-left: 20px;
 
@@ -169,14 +183,18 @@ const OptionContainer = styled.div`
   flex-direction: column;
 `;
 
-const OptionContentContainer = styled.div<{ $isActive: boolean }>`
+const OptionContentContainer = styled.button<{ $isActive: boolean }>`
+  background-color: transparent;
+  border: none;
+
   width: 90%;
 
   display: flex;
 
   margin-bottom: 20px;
 
-  color: ${({ $isActive }) => ($isActive ? "#d52e7c" : "black")};
+  text-align: left;
+  color: ${({ $isActive }) => ($isActive ? "#949494" : "black")};
 `;
 
 const OptionNumber = styled.div`
@@ -193,7 +211,7 @@ const SelectAnswer = styled.div`
   flex-direction: row;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 
   width: 100%;
 
@@ -201,33 +219,49 @@ const SelectAnswer = styled.div`
   margin-top: 0;
 `;
 
+const CorrectButton = styled.button`
+  height: 70px;
+
+  background-color: transparent;
+  border: none;
+
+  margin: 0;
+  padding: 0;
+`;
+
 const DividerContainer = styled.div``;
 
-const CorrectButton = styled.div``;
+const WrongButton = styled.button`
+  height: 70px;
 
-const WrongButton = styled.div``;
+  background-color: transparent;
+  border: none;
+
+  margin: 0;
+  padding: 0;
+`;
 
 const InputAnswer = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
   flex-direction: column;
 
   width: 100%;
 
-  margin-left: 15;
+  margin-left: 30px;
   margin-top: 0;
 `;
 
 const Guide = styled.p`
   width: 80%;
 
+  text-align: center;
   font-size: 17px;
 `;
 
 const Input = styled.input`
   height: 50px;
-  width: 70%;
+  width: 80%;
 
   border-color: #888888;
   border-radius: 10px;
@@ -251,6 +285,7 @@ export const MultipleChoice = ({
   if (options === undefined) return null;
 
   const [quizAnswer, setQuizAnswer] = useAtom(answerState);
+  const [showResult] = useAtom(showResultState);
 
   return (
     <OptionContainer>
@@ -262,6 +297,7 @@ export const MultipleChoice = ({
             key={index}
             onClick={() => setQuizAnswer(answerNumber)}
             $isActive={quizAnswer === answerNumber}
+            disabled={showResult}
           >
             <OptionNumber>{String.fromCharCode(9312 + index)}</OptionNumber>
             <OptionDescription>{option}</OptionDescription>
@@ -276,6 +312,7 @@ export const TextInput = ({ guide }: { guide: string | undefined }) => {
   if (!guide) return;
 
   const [quizAnswer, setQuizAnswer] = useAtom(answerState);
+  const [showResult] = useAtom(showResultState);
 
   const handleQuizAnswerChange = (e: any) => {
     setQuizAnswer(e.target.value);
@@ -289,6 +326,7 @@ export const TextInput = ({ guide }: { guide: string | undefined }) => {
         onChange={handleQuizAnswerChange}
         type="text"
         placeholder="정답을 입력해 주세요"
+        disabled={showResult}
       />
     </InputAnswer>
   );
@@ -296,16 +334,17 @@ export const TextInput = ({ guide }: { guide: string | undefined }) => {
 
 export const OX = () => {
   const [quizAnswer, setQuizAnswer] = useAtom(answerState);
+  const [showResult] = useAtom(showResultState);
 
   return (
     <SelectAnswer>
-      <CorrectButton onClick={() => setQuizAnswer("O")}>
+      <CorrectButton onClick={() => setQuizAnswer("O")} disabled={showResult}>
         <Correct lineColor={quizAnswer == "O" ? "#E04E92" : "#FFC7E2"} />
       </CorrectButton>
       <DividerContainer>
         <Divider lineColor={quizAnswer ? "#E04E92" : "#FFC7E2"} />
       </DividerContainer>
-      <WrongButton onClick={() => setQuizAnswer("X")}>
+      <WrongButton onClick={() => setQuizAnswer("X")} disabled={showResult}>
         <Wrong lineColor={quizAnswer == "X" ? "#E04E92" : "#FFC7E2"} />
       </WrongButton>
     </SelectAnswer>
@@ -314,19 +353,27 @@ export const OX = () => {
 
 export default function Section() {
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [quizAnswer, setQuizAnswer] = useAtom(answerState);
   const [tagActive, setTagActive] = useState(false);
-  const [, setQuizAnswer] = useAtom(answerState);
-  const [question, setQuestion] = useAtom(questionState);
+
   const [viewedQuiz, setViewedQuiz] = useAtom(viewedQuizState);
-  const [, setTime] = useAtom(timeState);
-  const [, setHint] = useAtom(hintState);
+  const [question, setQuestion] = useAtom(questionState);
+
+  const [showResult] = useAtom(showResultState);
   const [started] = useAtom(startedState);
 
+  const [, setTime] = useAtom(timeState);
+  const [, setHint] = useAtom(hintState);
+
   useEffect(() => {
+    if (showResult) return;
+
     setQuestion(selectQuestion(viewedQuiz, setViewedQuiz));
   }, []);
 
   useEffect(() => {
+    if (showResult) return;
+
     setQuizAnswer("");
     setTime(0);
     setHint(question?.hint);
@@ -335,7 +382,7 @@ export default function Section() {
   if (!question) return null;
 
   return (
-    <QuizSection $started={started}>
+    <QuizSection $started={started} $showResult={showResult}>
       <QuizContent>
         <TagContainer>
           <TagButton onClick={() => setTagActive(!tagActive)}>
@@ -366,6 +413,15 @@ export default function Section() {
         <QuizTitleContainer>
           <QuizTitleNumber>
             {formatNumber(question.questionNumber)}
+            {showResult && (
+              <MarkupContainer>
+                {question.correctAnswer === quizAnswer ? (
+                  <CorrectAnswer />
+                ) : (
+                  <WrongAnswer />
+                )}
+              </MarkupContainer>
+            )}
           </QuizTitleNumber>
           <QuizTitleContent>
             {parseTextStyle(question.question).map((part, index) => (

@@ -4,6 +4,7 @@ type TextPart = {
   italic?: boolean;
 };
 
+/** 텍스트 볼드 등을 적용하는 함수 */
 export const parseTextStyle = (text: string): TextPart[] => {
   const regex = /(\/\*.*?\*\/|\/_.*?_\/)/g;
   const result: TextPart[] = [];

@@ -28,7 +28,7 @@ const QuizFooter = styled.div<{ $started: boolean }>`
 const Button = styled.button`
   background-color: transparent;
 
-  width: 30%;
+  width: 25%;
   height: 40px;
 
   margin-right: 10px;
@@ -49,7 +49,7 @@ const HintButton = styled(Button)`
 
 const HintContainer = styled.div`
   position: relative;
-  width: 30%;
+  width: 25%;
   height: 40px;
 
   margin-right: 10px;
@@ -72,18 +72,22 @@ const HintCount = styled.p`
   margin-left: 5px;
 `;
 
-const AnswerButton = styled(Button)``;
+const AnswerButton = styled(Button)`
+  width: 40%;
+`;
 
 export default function Footer() {
-  const [, setAlertConfig] = useAtom(confirmConfigState);
-  const [, setInfoConfig] = useAtom(infoConfigState);
   const [hintCount, setHintCount] = useAtom(hintCountState);
   const [viewedQuiz, setViewedQuiz] = useAtom(viewedQuizState);
-  const [, setQuestion] = useAtom(questionState);
+  const [showResult, setShowResult] = useAtom(showResultState);
+
   const [hint] = useAtom(hintState);
   const [answer] = useAtom(answerState);
-  const [started] = useAtom(startedState);
-  const [, setShowResult] = useAtom(showResultState);
+  const [started, setStarted] = useAtom(startedState);
+
+  const [, setAlertConfig] = useAtom(confirmConfigState);
+  const [, setInfoConfig] = useAtom(infoConfigState);
+  const [, setQuestion] = useAtom(questionState);
 
   const handleShowHint = () => {
     if (!hint) {
@@ -119,6 +123,7 @@ export default function Footer() {
         onConfirm: () => {
           setAlertConfig(null);
           setShowResult(true);
+          setStarted(false);
         },
         onCancel: () => {
           setAlertConfig(null);
@@ -167,15 +172,21 @@ export default function Footer() {
 
   return (
     <QuizFooter $started={started}>
-      <HintContainer>
-        <HintContent>
-          <Clue />
-          <HintCount>{hintCount}</HintCount>
-        </HintContent>
-        <HintButton onClick={handleHintCheck}>힌트</HintButton>
-      </HintContainer>
-      <AnswerButton onClick={handleAnswerCheck}>정답 확인</AnswerButton>
-      <Button onClick={handlePassCheck}>넘기기</Button>
+      {!showResult ? (
+        <>
+          <HintContainer>
+            <HintContent>
+              <Clue />
+              <HintCount>{hintCount}</HintCount>
+            </HintContent>
+            <HintButton onClick={handleHintCheck}>힌트</HintButton>
+          </HintContainer>
+          <AnswerButton onClick={handleAnswerCheck}>정답 확인</AnswerButton>
+          <Button onClick={handlePassCheck}>넘기기</Button>
+        </>
+      ) : (
+        <></>
+      )}
     </QuizFooter>
   );
 }

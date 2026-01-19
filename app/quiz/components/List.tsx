@@ -1,6 +1,10 @@
 "use client";
 
-import { listOpenState, startedState } from "@/app/atom/quizAtom";
+import {
+  listOpenState,
+  showResultState,
+  startedState,
+} from "@/app/atom/quizAtom";
 import { Bookmark, Category, Close, Help } from "@/public/svgs/ListSVG";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAtom } from "jotai";
@@ -83,10 +87,11 @@ const ListButtonText = styled.p`
 export default function List() {
   const [listOpen, setListOpen] = useAtom(listOpenState);
   const [, setStarted] = useAtom(startedState);
+  const [showResult] = useAtom(showResultState);
 
   const listClosing = () => {
     setListOpen(false);
-    setStarted(true);
+    if (!showResult) setStarted(true);
   };
 
   return (

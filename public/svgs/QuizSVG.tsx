@@ -207,3 +207,19 @@ export const Wrong = ({ lineColor }: { lineColor: string }) => {
     </svg>
   );
 };
+
+export const WrongAnswer = () => {
+  return (
+    <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+      <line x1="60" y1="0" x2="0" y2="60" stroke="#D52E7C" strokeWidth="2" />
+    </svg>
+  );
+};
+
+export const CorrectAnswer = () => {
+  return (
+    <svg width="60" height="60" viewBox="0 0 70 70" fill="none">
+      <circle cx="35" cy="35" r="34.5" stroke="#D52E7C" />
+    </svg>
+  );
+};
