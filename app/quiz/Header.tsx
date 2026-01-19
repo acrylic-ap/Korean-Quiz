@@ -3,7 +3,7 @@
 import styled from "styled-components";
 import Image from "next/image";
 import { ListIcon, PauseIcon, PlayIcon } from "@/public/svgs/HeaderSVG";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { formatTime } from "./tools/format_time";
 import {
   listOpenState,

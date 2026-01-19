@@ -16,23 +16,26 @@ import { useAtom } from "jotai";
 import { selectQuestion } from "./tools/select_question";
 import { Clue } from "@/public/svgs/QuizSVG";
 
-const QuizFooter = styled.div<{ $started: boolean }>`
+const QuizFooter = styled.div<{ $started: boolean; $showResult: boolean }>`
+  position: relative;
+
   width: 100%;
   height: 10%;
 
-  display: ${({ $started }) => ($started ? "flex" : "none")};
+  display: ${({ $started, $showResult }) =>
+    $started || $showResult ? "block" : "none"};
   justify-content: center;
   align-items: flex-end;
 `;
 
 const Button = styled.button`
+  position: absolute;
+  bottom: 15px;
+
   background-color: transparent;
 
   width: 25%;
   height: 40px;
-
-  margin-right: 10px;
-  margin-bottom: 15px;
 
   border: 1px solid #000;
   border-radius: 5px;
@@ -40,25 +43,31 @@ const Button = styled.button`
   font-size: 16px;
 `;
 
+const SkipButton = styled(Button)`
+  right: 10px;
+`;
+
+const HintContainer = styled.div`
+  position: absolute;
+  left: 10px;
+  bottom: 0;
+
+  width: 25%;
+  height: 40px;
+`;
+
 const HintButton = styled(Button)`
+  position: relative;
+
   width: 100%;
   height: 100%;
 
   margin: none;
 `;
 
-const HintContainer = styled.div`
-  position: relative;
-  width: 25%;
-  height: 40px;
-
-  margin-right: 10px;
-  margin-bottom: 15px;
-`;
-
 const HintContent = styled.div`
   position: absolute;
-  top: -40px;
+  top: -55px;
 
   width: 100%;
 
@@ -73,12 +82,15 @@ const HintCount = styled.p`
 `;
 
 const AnswerButton = styled(Button)`
+  right: 50%;
+
   width: 40%;
+
+  transform: translate(50%, 0%);
 `;
 
 export default function Footer() {
   const [hintCount, setHintCount] = useAtom(hintCountState);
-  const [viewedQuiz, setViewedQuiz] = useAtom(viewedQuizState);
   const [showResult, setShowResult] = useAtom(showResultState);
 
   const [hint] = useAtom(hintState);
@@ -138,7 +150,7 @@ export default function Footer() {
       content: `정말로 넘기시겠습니까?
 기존에 작업한 내용은 저장되지 않습니다!`,
       onConfirm: () => {
-        setQuestion(selectQuestion(viewedQuiz, setViewedQuiz));
+        setQuestion(selectQuestion());
         setAlertConfig(null);
       },
       onCancel: () => {
@@ -170,8 +182,14 @@ export default function Footer() {
     }
   };
 
+  const handleNextQuiz = () => {
+    setShowResult(false);
+    setStarted(true);
+    setQuestion(selectQuestion());
+  };
+
   return (
-    <QuizFooter $started={started}>
+    <QuizFooter $started={started} $showResult={showResult}>
       {!showResult ? (
         <>
           <HintContainer>
@@ -182,11 +200,11 @@ export default function Footer() {
             <HintButton onClick={handleHintCheck}>힌트</HintButton>
           </HintContainer>
           <AnswerButton onClick={handleAnswerCheck}>정답 확인</AnswerButton>
-          <Button onClick={handlePassCheck}>넘기기</Button>
+          <SkipButton onClick={handlePassCheck}>넘기기</SkipButton>
         </>
       ) : (
         <>
-          <AnswerButton onClick={handleAnswerCheck}>정답 확인</AnswerButton>
+          <AnswerButton onClick={handleNextQuiz}>다음 문제</AnswerButton>
         </>
       )}
     </QuizFooter>

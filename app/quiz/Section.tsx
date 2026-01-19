@@ -367,7 +367,6 @@ export default function Section() {
   const [quizAnswer, setQuizAnswer] = useAtom(answerState);
   const [tagActive, setTagActive] = useState(false);
 
-  const [viewedQuiz, setViewedQuiz] = useAtom(viewedQuizState);
   const [question, setQuestion] = useAtom(questionState);
 
   const [showResult] = useAtom(showResultState);
@@ -379,7 +378,7 @@ export default function Section() {
   useEffect(() => {
     if (showResult) return;
 
-    setQuestion(selectQuestion(viewedQuiz, setViewedQuiz));
+    setQuestion(selectQuestion());
   }, []);
 
   useEffect(() => {
