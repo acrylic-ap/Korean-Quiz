@@ -8,7 +8,7 @@ import { Close } from "@/public/svgs/ListSVG";
 
 // Quiz.tsx (또는 별도 Modal 컴포넌트)
 const ModalOverlay = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -18,6 +18,7 @@ const ModalOverlay = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 999;
+  pointer-events: auto !important;
 `;
 
 const ModalContent = styled.div`
@@ -54,14 +55,14 @@ const LogoContainer = styled.div`
 `;
 
 const ContentText = styled.p`
+  margin: 0 20px;
   margin-top: 30px;
-
-  padding: 0 20px;
 
   color: #333;
   font-size: 20px;
   text-align: center;
   white-space: pre-wrap;
+  overflow-wrap: break-word;
 `;
 
 const ButtonContainer = styled.div`
@@ -86,7 +87,12 @@ export default function InfoModal() {
   if (!infoModalProps) return null;
 
   return (
-    <ModalOverlay onClick={() => setInfoModalProps(null)}>
+    <ModalOverlay
+      onClick={(e) => {
+        e.stopPropagation();
+        setInfoModalProps(null);
+      }}
+    >
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <ModalCloseButton onClick={() => setInfoModalProps(null)}>
           <Close />

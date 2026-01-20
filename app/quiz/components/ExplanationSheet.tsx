@@ -9,6 +9,8 @@ import styled from "styled-components";
 
 import { Drawer } from "vaul";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { EllipsisText } from "./explanationComponent/ellipsisText";
+import InfoModal from "@/app/components/InfoModal";
 
 const Overlay = styled(Drawer.Overlay)`
   position: fixed;
@@ -50,15 +52,18 @@ const AnswerCard = styled.div`
 `;
 
 const AnswerTitle = styled.p`
-  margin-left: 10px;
+  margin: 10px;
 
   font-size: 15pt;
+
+  white-space: nowrap;
 `;
 
 const AnswerValue = styled.p`
-  margin-left: 10px;
-
   font-size: 14pt;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Title = styled.p`
@@ -126,7 +131,7 @@ export default function ExplanationSheet() {
             </AnswerCard>
             <AnswerCard>
               <AnswerTitle>내 답</AnswerTitle>
-              <AnswerValue>{answer}</AnswerValue>
+              <EllipsisText text={answer} />
             </AnswerCard>
           </AnswerComparison>
 
@@ -151,6 +156,8 @@ export default function ExplanationSheet() {
             </RationaleList>
           )}
         </Content>
+
+        <InfoModal />
       </Drawer.Portal>
     </Drawer.Root>
   );
