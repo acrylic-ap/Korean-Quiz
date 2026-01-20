@@ -7,6 +7,7 @@ import {
   hintCountState,
   hintState,
   infoConfigState,
+  openExplanationSheetState,
   questionState,
   showResultState,
   startedState,
@@ -108,6 +109,7 @@ const ExplanationButton = styled(Button)`
 export default function Footer() {
   const [hintCount, setHintCount] = useAtom(hintCountState);
   const [showResult, setShowResult] = useAtom(showResultState);
+  const [, setOpenExplanationSheet] = useAtom(openExplanationSheetState);
 
   const [hint] = useAtom(hintState);
   const [answer] = useAtom(answerState);
@@ -204,7 +206,9 @@ export default function Footer() {
     setQuestion(selectQuestion());
   };
 
-  const explanation = () => {};
+  const showExplanation = () => {
+    setOpenExplanationSheet(true);
+  };
 
   return (
     <QuizFooter $started={started} $showResult={showResult}>
@@ -223,7 +227,7 @@ export default function Footer() {
       ) : (
         <>
           <NextButton onClick={nextQuiz}>다음 문제</NextButton>
-          <ExplanationButton onClick={explanation}>해설</ExplanationButton>
+          <ExplanationButton onClick={showExplanation}>해설</ExplanationButton>
         </>
       )}
     </QuizFooter>

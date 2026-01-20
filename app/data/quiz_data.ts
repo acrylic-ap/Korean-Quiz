@@ -5,7 +5,7 @@ export interface questionData {
   options?: string[];
   rationale?: string[];
   correctAnswer: number | string;
-  commentary: string;
+  commentary?: string;
   hint?: string;
   image?: any;
   tag: string[];
@@ -28,7 +28,6 @@ export const questionData: questionData[] = [
     ],
     hint: "교체는 음운의 개수가 변하지 않습니다.",
     correctAnswer: 4,
-    commentary: `문항 번호 밑에 있는 설명을 보시면 됩니다.`,
     tag: ["보통", "고등", "음운 변동", "탈락"],
   },
   {

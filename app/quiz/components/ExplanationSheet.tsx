@@ -1,0 +1,157 @@
+import {
+  answerState,
+  openExplanationSheetState,
+  questionState,
+} from "@/app/atom/quizAtom";
+import { useAtom } from "jotai";
+import { useEffect, useState, useRef } from "react";
+import styled from "styled-components";
+
+import { Drawer } from "vaul";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+
+const Overlay = styled(Drawer.Overlay)`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+`;
+
+const Content = styled(Drawer.Content)`
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  background: white;
+  border-radius: 16px 16px 0 0;
+  padding: 16px;
+`;
+
+const AnswerComparison = styled.div`
+  position: relative;
+  width: 100%;
+  height: 60px;
+
+  display: flex;
+  justify-content: center;
+`;
+
+const AnswerCard = styled.div`
+  width: 45%;
+  height: 50px;
+
+  margin: 10px;
+
+  border: 1px solid black;
+  border-radius: 5px;
+
+  display: flex;
+  align-items: center;
+`;
+
+const AnswerTitle = styled.p`
+  margin-left: 10px;
+
+  font-size: 15pt;
+`;
+
+const AnswerValue = styled.p`
+  margin-left: 10px;
+
+  font-size: 14pt;
+`;
+
+const Title = styled.p`
+  font-size: 19pt;
+
+  padding: 0 10px;
+`;
+
+const Commentary = styled.p`
+  font-size: 15pt;
+
+  padding: 0 20px;
+`;
+
+const RationaleList = styled.div``;
+
+const RationaleTitle = styled(Title)`
+  font-size: 17pt;
+`;
+
+const RationaleBody = styled.div`
+  margin: 0 10px;
+`;
+
+const RationaleRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  padding: 0 10px;
+
+  margin-bottom: 10px;
+`;
+
+const RationaleMarker = styled.p`
+  margin: 0;
+  margin-right: 5px;
+`;
+
+const RationaleText = styled.p`
+  margin: 0;
+`;
+
+export default function ExplanationSheet() {
+  const [open, setOpen] = useAtom(openExplanationSheetState);
+  const [question] = useAtom(questionState);
+  const [answer] = useAtom(answerState);
+
+  if (!question) return false;
+
+  return (
+    <Drawer.Root open={open} onOpenChange={setOpen}>
+      <Drawer.Portal>
+        <Overlay />
+        <Content>
+          <VisuallyHidden>
+            <Drawer.Title>해설</Drawer.Title>
+            <Drawer.Description>해설</Drawer.Description>
+          </VisuallyHidden>
+
+          <AnswerComparison>
+            <AnswerCard>
+              <AnswerTitle>정답</AnswerTitle>
+              <AnswerValue>{question.correctAnswer}</AnswerValue>
+            </AnswerCard>
+            <AnswerCard>
+              <AnswerTitle>내 답</AnswerTitle>
+              <AnswerValue>{answer}</AnswerValue>
+            </AnswerCard>
+          </AnswerComparison>
+
+          <Title>해설</Title>
+          <Commentary>
+            {question.commentary ?? "하단에 있는 오답 보기를 확인해 주세요!"}
+          </Commentary>
+
+          {question.rationale && (
+            <RationaleList>
+              <RationaleTitle>오답 보기</RationaleTitle>
+              <RationaleBody>
+                {question.rationale?.map((item, index) => (
+                  <RationaleRow key={index}>
+                    <RationaleMarker>
+                      {String.fromCharCode(9312 + index)}
+                    </RationaleMarker>
+                    <RationaleText>{item}</RationaleText>
+                  </RationaleRow>
+                ))}
+              </RationaleBody>
+            </RationaleList>
+          )}
+        </Content>
+      </Drawer.Portal>
+    </Drawer.Root>
+  );
+}
