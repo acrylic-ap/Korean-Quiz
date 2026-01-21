@@ -31,6 +31,10 @@ const QuizSection = styled.div<{ $started: boolean; $showResult: boolean }>`
   width: 100%;
   height: 80%;
 
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   display: ${({ $started, $showResult }) =>
     $started || $showResult ? "block" : "none"};
 `;
@@ -128,7 +132,16 @@ const WriteButton = styled(ButtonImage)`
 const BookmarkButton = styled(ButtonImage)``;
 
 const QuizContainer = styled.div`
-  height: 93%;
+  height: 80%;
+
+  overflow-y: auto;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 
   display: flex;
   flex-direction: column;
