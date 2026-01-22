@@ -7,10 +7,10 @@ export interface questionData {
   correctAnswer: number | string;
   commentary?: string;
   hint?: string;
-  image?: any;
   tag: string[];
-  description?: string;
   guide?: string;
+  article?: string;
+  image?: any;
 }
 
 export const questionData: questionData[] = [
@@ -46,7 +46,7 @@ export const questionData: questionData[] = [
 일이 잘못된 후에는 다시 되돌릴 수 없다는 의미를 가지고 있습니다.
 사진을 보시면 소는 이미 나와 있는데 외양간을 고치려는 모습을 볼 수 있습니다. 그래서 정답은 4번이 되겠습니다.`,
     hint: "사진에 있는 동물이 무엇인지 보면 쉽게 맞힐 수 있습니다.",
-    // image: require("@assets/images/cowboy.jpg"),
+    image: require("@/public/images/quiz_image/cowboy.jpg"),
     tag: ["기초", "일반", "속담"],
   },
   {
@@ -119,8 +119,8 @@ export const questionData: questionData[] = [
     correctAnswer: "여름",
     commentary: `자두와 살구, 복숭아의 경우 모두 과일을 의미하니 '여름이 되면 우리 마을에 탐스러운 과일이 열립니다' 부분이 중심 문장이라고 볼 수 있습니다.`,
     hint: "어떤 단어를 분류하는 말을 보시면 됩니다.",
-    description:
-      "우리 마을에는 새콤달콤한 자두가 탐스럽게 익어 갑니다. 그리고 살구나무에는 살구가 주렁주렁 달립니다. 과수원에는 달콤한 복숭아가 열립니다. 여름이 되면 이처럼 우리 마을에는 탐스러운 과일이 열립니다.",
+    article:
+      ` 우리 마을에는 새콤달콤한 자두가 탐스럽게 익어 갑니다. 그리고 살구나무에는 살구가 주렁주렁 달립니다. 과수원에는 달콤한 복숭아가 열립니다. 여름이 되면 이처럼 우리 마을에는 탐스러운 과일이 열립니다.`,
     tag: ["보통", "초등", "문법"],
     guide: `'사람은 누구나 늙는다'가 중심 문장이면 '사람'으로 적습니다.`,
   },

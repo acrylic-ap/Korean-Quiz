@@ -6,6 +6,8 @@ import Section from "./Section";
 import Footer from "./Footer";
 import List from "./components/List";
 import ExplanationSheet from "./components/ExplanationSheet";
+import QuizView from "./components/View";
+
 const QuizBackground = styled.div`
   position: relative;
   background-color: white;
@@ -22,6 +24,7 @@ export default function Quiz() {
         <Footer />
       </>
       <List />
+      <QuizView />
       <ExplanationSheet />
     </QuizBackground>
   );

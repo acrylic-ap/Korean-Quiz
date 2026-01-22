@@ -29,3 +29,4 @@ interface InfoModal {
 export const confirmConfigState = atom<ConfirmModal | null>(null);
 export const infoConfigState = atom<InfoModal | null>(null);
 export const openExplanationSheetState = atom(false);
+export const openViewState = atom(false);

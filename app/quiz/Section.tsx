@@ -6,6 +6,7 @@ import {
   CorrectAnswer,
   Divider,
   Draw,
+  ShowView,
   ToggleTag,
   Write,
   Wrong,
@@ -16,6 +17,7 @@ import styled from "styled-components";
 import {
   answerState,
   hintState,
+  openViewState,
   questionState,
   showResultState,
   startedState,
@@ -294,6 +296,13 @@ const Input = styled.input`
   outline: none;
 `;
 
+const ShowViewContainer = styled.div`
+  width: 80px;
+
+  margin-top: 20px;
+  margin-left: 40px;
+`;
+
 export const MultipleChoice = ({
   options,
   correctNumber,
@@ -377,9 +386,9 @@ export const OX = () => {
 
 export default function Section() {
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [quizAnswer, setQuizAnswer] = useAtom(answerState);
   const [tagActive, setTagActive] = useState(false);
 
+  const [quizAnswer, setQuizAnswer] = useAtom(answerState);
   const [question, setQuestion] = useAtom(questionState);
 
   const [showResult] = useAtom(showResultState);
@@ -387,6 +396,7 @@ export default function Section() {
 
   const [, setTime] = useAtom(timeState);
   const [, setHint] = useAtom(hintState);
+  const [, setOpenView] = useAtom(openViewState);
 
   useEffect(() => {
     if (showResult) return;
@@ -472,6 +482,11 @@ export default function Section() {
         ) : (
           <>뭔가 잘못된 것 같은데요?</>
         )}
+
+        <ShowViewContainer onClick={() => setOpenView(true)}>
+          {(question.article && <ShowView type="article" />) ||
+            (question.image && <ShowView type="image" />)}
+        </ShowViewContainer>
       </QuizContainer>
     </QuizSection>
   );
