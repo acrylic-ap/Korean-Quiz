@@ -25,6 +25,5 @@ export const selectQuestion = () => {
     return next;
   });
   
-  return questionData[1];
   return unviewed[randomIndex];
 };

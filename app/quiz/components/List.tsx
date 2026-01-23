@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  infoConfigState,
   listOpenState,
   showResultState,
   startedState,
@@ -86,12 +87,24 @@ const ListButtonText = styled.p`
 
 export default function List() {
   const [listOpen, setListOpen] = useAtom(listOpenState);
-  const [, setStarted] = useAtom(startedState);
+
   const [showResult] = useAtom(showResultState);
+
+  const [, setStarted] = useAtom(startedState);
+  const [, setInfoConfig] = useAtom(infoConfigState);
 
   const listClosing = () => {
     setListOpen(false);
     if (!showResult) setStarted(true);
+  };
+
+  const showComingSoonModal = () => {
+    setInfoConfig({
+      content: "추후에 구현될 예정입니다.",
+      onClose: () => {
+        setInfoConfig(null);
+      },
+    });
   };
 
   return (
@@ -114,17 +127,23 @@ export default function List() {
 
             <ListButtonContainer>
               <ListButton>
-                <ListButtonText>북마크</ListButtonText>
+                <ListButtonText onClick={showComingSoonModal}>
+                  북마크
+                </ListButtonText>
                 <Bookmark />
               </ListButton>
 
               <ListButton>
-                <ListButtonText>카테고리</ListButtonText>
+                <ListButtonText onClick={showComingSoonModal}>
+                  카테고리
+                </ListButtonText>
                 <Category />
               </ListButton>
 
               <ListButton>
-                <ListButtonText>도움말</ListButtonText>
+                <ListButtonText onClick={showComingSoonModal}>
+                  도움말
+                </ListButtonText>
                 <Help />
               </ListButton>
             </ListButtonContainer>

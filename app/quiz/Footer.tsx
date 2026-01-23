@@ -36,12 +36,12 @@ const Button = styled.button`
   background-color: transparent;
 
   width: 25%;
-  height: 40px;
+  height: 50px;
 
   border: 1px solid #000;
   border-radius: 5px;
 
-  font-size: 16px;
+  font-size: 20px;
 `;
 
 const SkipButton = styled(Button)`
@@ -54,7 +54,7 @@ const HintContainer = styled.div`
   bottom: 0;
 
   width: 25%;
-  height: 40px;
+  height: 50px;
 `;
 
 const HintButton = styled(Button)`
@@ -68,7 +68,7 @@ const HintButton = styled(Button)`
 
 const HintContent = styled.div`
   position: absolute;
-  top: -55px;
+  top: -60px;
 
   width: 100%;
 
@@ -80,6 +80,8 @@ const HintContent = styled.div`
 
 const HintCount = styled.p`
   margin-left: 5px;
+
+  font-size: 14pt;
 `;
 
 const AnswerButton = styled(Button)`
