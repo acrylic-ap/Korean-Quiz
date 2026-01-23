@@ -7,6 +7,10 @@ body {
   padding: 0;
 }
 
+button {
+  color: black
+}
+
 * {
   font-family: 'Cafe24OnePrettyNight';
 }
