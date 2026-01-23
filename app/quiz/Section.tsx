@@ -176,13 +176,20 @@ const MarkupContainer = styled.div`
   transform: translate(-50%, -50%);
 `;
 
-const QuizTitleContent = styled.h1`
+const QuizTitleContent = styled.span`
   width: 80%;
 
+  margin-top: 10px;
   margin-left: 20px;
 
   font-size: 17pt;
   font-weight: 400;
+`;
+
+const ShowViewContainer = styled.span`
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.25rem;
 `;
 
 const QuizTitleText = styled.span<{ $bold?: boolean; $italic?: boolean }>`
@@ -294,13 +301,6 @@ const Input = styled.input`
   font-size: 16px;
 
   outline: none;
-`;
-
-const ShowViewContainer = styled.div`
-  width: 80px;
-
-  margin-top: 20px;
-  margin-left: 40px;
 `;
 
 export const MultipleChoice = ({
@@ -467,6 +467,10 @@ export default function Section() {
                 {part.text}
               </QuizTitleText>
             ))}
+            <ShowViewContainer onClick={() => setOpenView(true)}>
+              {(question.article && <ShowView type="article" />) ||
+                (question.image && <ShowView type="image" />)}
+            </ShowViewContainer>
           </QuizTitleContent>
         </QuizTitleContainer>
 
@@ -482,11 +486,6 @@ export default function Section() {
         ) : (
           <>뭔가 잘못된 것 같은데요?</>
         )}
-
-        <ShowViewContainer onClick={() => setOpenView(true)}>
-          {(question.article && <ShowView type="article" />) ||
-            (question.image && <ShowView type="image" />)}
-        </ShowViewContainer>
       </QuizContainer>
     </QuizSection>
   );
