@@ -3,6 +3,7 @@ import "./globals.css";
 import ConfirmModal from "./components/ConfirmModal";
 import InfoModal from "./components/InfoModal";
 import localFont from "next/font/local";
+import StyledComponentsRegistry from "./lib/registry";
 
 const cafe24OnePrettyNight = localFont({
   src: [
@@ -31,9 +32,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <ConfirmModal />
-        <InfoModal />
-        {children}
+        <StyledComponentsRegistry>
+          <ConfirmModal />
+          <InfoModal />
+          {children}
+        </StyledComponentsRegistry>
       </body>
     </html>
   );
