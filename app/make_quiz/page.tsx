@@ -12,13 +12,14 @@ import Image from "next/image";
 
 import TextareaAutosize from "react-textarea-autosize";
 import {
-  articleContentAtom,
+  articleAtom,
   choiceDescriptionAtom,
   choiceExplanationAtom,
   correctAnswerAtom,
   correctAnswerOXAtom,
   explanationAtom,
   focusTargetAtom,
+  guideAtom,
   hintAtom,
   previewAtom,
   questionTitleAtom,
@@ -28,6 +29,9 @@ import {
 } from "../atom/makeQuizAtom";
 
 import { useAtom } from "jotai";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../lib/client";
+import { uploadImage } from "../tools/uploadImage";
 
 const Header = () => {
   return (
@@ -82,7 +86,10 @@ const Section = () => {
     e: ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const newChoiceDescriptions = new Map(choiceDescriptions);
-    newChoiceDescriptions.set(index, [e.target.value, false]);
+    newChoiceDescriptions.set(index, [
+      e.target.value,
+      newChoiceDescriptions.get(index)?.[1] || false,
+    ]);
     setChoiceDescriptions(newChoiceDescriptions);
   };
 
@@ -92,6 +99,13 @@ const Section = () => {
 
   const handleCorrectAnswerChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setCorrectAnswer(e.target.value);
+  };
+
+  // Guide
+  const [guide, setGuide] = useAtom(guideAtom);
+
+  const handleGuideChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setGuide(e.target.value);
   };
 
   const [correctAnswerOX, setCorrectAnswerOX] = useAtom(correctAnswerOXAtom);
@@ -114,7 +128,7 @@ const Section = () => {
   };
 
   // Article
-  const [article, setArticle] = useAtom(articleContentAtom);
+  const [article, setArticle] = useAtom(articleAtom);
   const articleRef = useRef<HTMLTextAreaElement>(null);
 
   const handleArticleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -215,12 +229,26 @@ const Section = () => {
     }
   }, [focusTarget]);
 
+  const showExplanationWarning =
+    focusTarget &&
+    (type.value === "multiple-choice"
+      ? !explanation &&
+        ![...choiceExplanations.values()].some((desc) => desc.trim() !== "")
+      : !explanation && type.value !== "multiple-choice");
+
   return (
     <div
       id="section"
       className="w-full h-[75%] overflow-y-auto
     [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
+      <p
+        id="guide"
+        className="w-[90%] mb-4 ml-4
+      text text-[#D52E7C]"
+      >
+        [*] 필수 항목 [^] 선택형 필수 항목
+      </p>
       <div id="question-title-container" className="w-[90%] mb-6 ml-4">
         <h2 className={subtitleStyle}>
           지시문<span className="text-[#D52E7C]">*</span>
@@ -318,26 +346,23 @@ const Section = () => {
             선지별 내용<span className="text-[#D52E7C]">*</span>
           </h2>
           {[...choiceDescriptions].map(([index, [description, isCorrect]]) => (
-            <div key={index} className="relative">
-              <TextareaAutosize
-                className={`${choiceStyle}
+            <div key={index} className="relative flex items-center">
+              <div className="relative w-[90%]">
+                <TextareaAutosize
+                  className={`${choiceStyle}
                   ${focusTarget && !description ? blankedWarningStyle : ""}`}
-                placeholder="선지 내용 입력"
-                value={description}
-                onChange={(e) => handleChoiceDescriptionChange(index, e)}
-                ref={(el) => {
-                  if (el) choiceDescriptionsRef.current.set(index, el);
-                }}
-              />
-              {/* textarea의 오른쪽 부분을 hover할 경우 선지를 삭제하거나 정답인 것을 표시하는 버튼 추가 */}
+                  placeholder="선지 내용 입력"
+                  value={description}
+                  onChange={(e) => handleChoiceDescriptionChange(index, e)}
+                  ref={(el) => {
+                    if (el) choiceDescriptionsRef.current.set(index, el);
+                  }}
+                />
 
-              <div
-                className="absolute mr-4 right-0 top-1/2 transform -translate-y-1/2
-              flex items-center"
-              >
-                {choiceDescriptions.size < 2 ? null : (
+                {choiceDescriptions.size < 3 ? null : (
                   <button
-                    className="mr-2 text-sm text-red-500"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2
+                    w-6 h-6 flex items-center justify-center"
                     onClick={() => {
                       const newChoiceDescriptions = new Map(choiceDescriptions);
                       newChoiceDescriptions.delete(index);
@@ -348,37 +373,34 @@ const Section = () => {
                       setChoiceExplanations(newChoiceExplanations);
                     }}
                   >
-                    <Image
-                      src="/images/bin.png"
-                      alt="삭제 아이콘"
-                      width={20}
-                      height={20}
-                    />
+                    <svg width="15" height="15" viewBox="0 0 12 12" fill="none">
+                      <path
+                        d="M0.75 11.236L5.993 5.993L11.236 11.236M11.236 0.75L5.992 5.993L0.75 0.75"
+                        stroke="#727272"
+                        strokeWidth="1"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </button>
                 )}
+              </div>
+
+              <div className="relative w-[10%] flex justify-center ml-2">
                 <button
-                  className={`text-sm ${isCorrect ? "text-green-500" : "text-gray-500"}`}
+                  className={`${isCorrect ? "bg-[#D52E7C]" : "bg-[#727272]"} rounded-full w-8 h-8 flex items-center justify-center`}
                   onClick={() => {
                     const newChoiceDescriptions = new Map(choiceDescriptions);
                     newChoiceDescriptions.set(index, [description, !isCorrect]);
                     setChoiceDescriptions(newChoiceDescriptions);
                   }}
                 >
-                  {isCorrect ? (
-                    <svg width="15" height="11" viewBox="0 0 15 11" fill="none">
-                      <path
-                        d="M4.76821 8.95757L13.5702 0.156568C13.6675 0.059235 13.7822 0.00723485 13.9142 0.000568181C14.0462 -0.00609849 14.1672 0.0459016 14.2772 0.156568C14.3872 0.267235 14.4425 0.386235 14.4432 0.513568C14.4439 0.640901 14.3889 0.759568 14.2782 0.869568L5.33421 9.81957C5.17221 9.98157 4.98355 10.0626 4.76821 10.0626C4.55288 10.0626 4.36421 9.98157 4.20221 9.81957L0.152212 5.76957C0.0548784 5.67224 0.00421176 5.55657 0.000211765 5.42257C-0.00378824 5.28857 0.0488784 5.16657 0.158212 5.05657C0.267545 4.94657 0.386545 4.89157 0.515212 4.89157C0.643878 4.89157 0.762878 4.94657 0.872212 5.05657L4.76821 8.95757Z"
-                        fill="#D52E7C"
-                      />
-                    </svg>
-                  ) : (
-                    <svg width="15" height="11" viewBox="0 0 15 11" fill="none">
-                      <path
-                        d="M4.76821 8.95757L13.5702 0.156568C13.6675 0.059235 13.7822 0.00723485 13.9142 0.000568181C14.0462 -0.00609849 14.1672 0.0459016 14.2772 0.156568C14.3872 0.267235 14.4425 0.386235 14.4432 0.513568C14.4439 0.640901 14.3889 0.759568 14.2782 0.869568L5.33421 9.81957C5.17221 9.98157 4.98355 10.0626 4.76821 10.0626C4.55288 10.0626 4.36421 9.98157 4.20221 9.81957L0.152212 5.76957C0.0548784 5.67224 0.00421176 5.55657 0.000211765 5.42257C-0.00378824 5.28857 0.0488784 5.16657 0.158212 5.05657C0.267545 4.94657 0.386545 4.89157 0.515212 4.89157C0.643878 4.89157 0.762878 4.94657 0.872212 5.05657L4.76821 8.95757Z"
-                        fill="#727272"
-                      />
-                    </svg>
-                  )}
+                  <svg width="16" height="12" viewBox="0 0 15 11" fill="none">
+                    <path
+                      d="M4.76821 8.95757L13.5702 0.156568C13.6675 0.059235 13.7822 0.00723485 13.9142 0.000568181C14.0462 -0.00609849 14.1672 0.0459016 14.2772 0.156568C14.3872 0.267235 14.4425 0.386235 14.4432 0.513568C14.4439 0.640901 14.3889 0.759568 14.2782 0.869568L5.33421 9.81957C5.17221 9.98157 4.98355 10.0626 4.76821 10.0626C4.55288 10.0626 4.36421 9.98157 4.20221 9.81957L0.152212 5.76957C0.0548784 5.67224 0.00421176 5.55657 0.000211765 5.42257C-0.00378824 5.28857 0.0488784 5.16657 0.158212 5.05657C0.267545 4.94657 0.386545 4.89157 0.515212 4.89157C0.643878 4.89157 0.762878 4.94657 0.872212 5.05657L4.76821 8.95757Z"
+                      fill="white"
+                    />
+                  </svg>
                 </button>
               </div>
             </div>
@@ -436,19 +458,30 @@ const Section = () => {
         </div>
       ) : (
         type.value === "text-input" && (
-          <div id="text-input-container" className="w-[90%] mb-8 ml-4">
-            <h2 className={subtitleStyle}>
-              정답<span className="text-[#D52E7C]">*</span>
-            </h2>
-            <TextareaAutosize
-              className={`${textareaStyle}
+          <>
+            <div id="text-input-container" className="w-[90%] mb-8 ml-4">
+              <h2 className={subtitleStyle}>가이드</h2>
+              <TextareaAutosize
+                className={textareaStyle}
+                value={guide}
+                placeholder="가이드 입력"
+                onChange={handleGuideChange}
+              />
+            </div>
+            <div id="text-input-container" className="w-[90%] mb-8 ml-4">
+              <h2 className={subtitleStyle}>
+                정답<span className="text-[#D52E7C]">*</span>
+              </h2>
+              <TextareaAutosize
+                className={`${textareaStyle}
                 ${focusTarget && !correctAnswer ? blankedWarningStyle : ""}`}
-              value={correctAnswer}
-              placeholder="정답 입력"
-              onChange={handleCorrectAnswerChange}
-              ref={correctAnswerRef}
-            />
-          </div>
+                value={correctAnswer}
+                placeholder="정답 입력"
+                onChange={handleCorrectAnswerChange}
+                ref={correctAnswerRef}
+              />
+            </div>
+          </>
         )
       )}
       {type.value === "multiple-choice" && (
@@ -475,19 +508,16 @@ const Section = () => {
       )}
       <div id="solution-container" className="w-[90%] mb-8 ml-4">
         <h2 className={subtitleStyle}>
-          해설<span className="text-[#D52E7C]">^</span>
+          해설
+          {type.value === "multiple-choice" ? (
+            <span className="text-[#D52E7C]">^</span>
+          ) : (
+            <span className="text-[#D52E7C]">*</span>
+          )}
         </h2>
         <TextareaAutosize
           className={`${textareaStyle}
-            ${
-              focusTarget &&
-              !explanation &&
-              ![...choiceExplanations.values()].some(
-                (desc) => desc.trim() !== "",
-              )
-                ? blankedWarningStyle
-                : ""
-            }`}
+            ${showExplanationWarning ? blankedWarningStyle : ""}`}
           placeholder="해설 입력"
           value={explanation}
           onChange={handleExplanationChange}
@@ -613,13 +643,15 @@ const Footer = () => {
   const [correctAnswer] = useAtom(correctAnswerAtom);
   const [correctAnswerOX] = useAtom(correctAnswerOXAtom);
   const [selectedView] = useAtom(selectedViewAtom);
-  const [article] = useAtom(articleContentAtom);
+  const [article] = useAtom(articleAtom);
   const [explanation] = useAtom(explanationAtom);
   const [choiceExplanations] = useAtom(choiceExplanationAtom);
   const [preview] = useAtom(previewAtom);
+  const [hint] = useAtom(hintAtom);
+  const [guide] = useAtom(guideAtom);
   const [, setFocusTarget] = useAtom(focusTargetAtom);
 
-  const requestCreateQuiz = () => {
+  const requestCreateQuiz = async () => {
     const trigger = (target: string) => {
       setFocusTarget(`${target}-${Date.now()}`);
     };
@@ -631,9 +663,9 @@ const Footer = () => {
       case type.value === "multiple-choice" &&
         (() => {
           const descriptions = [...choiceDescriptions.values()];
-          // 1. 빈 내용이 있는지 체크
+
           const hasEmpty = descriptions.some(([desc]) => desc.trim() === "");
-          // 2. 정답 체크가 하나라도 되어 있는지 확인
+
           const hasNoCorrect = !descriptions.some(
             ([, isCorrect]) => isCorrect === true,
           );
@@ -668,7 +700,52 @@ const Footer = () => {
         break;
     }
 
-    alert("문제 생성 요청이 성공적으로 전송되었습니다!");
+    const getCorrectAnswer = () => {
+      const handlers = {
+        "text-input": () => correctAnswer,
+        ox: () => correctAnswerOX,
+        "multiple-choice": () =>
+          Array.from(choiceDescriptions.values())
+            .map(([_, isCorrect], idx) => (isCorrect ? idx + 1 : -1))
+            .filter((idx) => idx !== -1),
+      };
+
+      const handler = handlers[type.value as keyof typeof handlers];
+      return handler ? handler() : undefined;
+    };
+
+    // firebase에 삽입
+    try {
+      let finalImageUrl = null;
+
+      // 만약 이미지가 선택된 상태라면 먼저 업로드
+      if (selectedView === "image" && preview) {
+        finalImageUrl = await uploadImage(preview); // 여기서 진짜 URL을 받아옴
+      }
+
+      const quizData = {
+        question: questionTitle,
+        type: type.value,
+        options: Array.from(choiceDescriptions.entries()).map(
+          ([, [description]]) => ({ description }),
+        ),
+        rationale: Array.from(choiceExplanations.values()),
+        correctAnswer: getCorrectAnswer(),
+        commentary: explanation.trim() === "" ? null : explanation,
+        hint: hint.trim() === "" ? null : hint,
+        tag: ["실험용"],
+        guide: guide,
+        article: article.trim() === "" ? null : article,
+        image: preview ? finalImageUrl : null,
+      };
+
+      const quizRef = await addDoc(collection(db, "requested"), quizData);
+
+      console.log("성공");
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      alert("저장 중 오류가 발생했습니다.");
+    }
   };
 
   return (
