@@ -17,7 +17,7 @@ export interface questionData {
   questionNumber: number;
   question: string;
   type: "multiple-choice" | "text-input" | "ox";
-  options?: string[];
+  options?: { description: string }[];
   rationale?: string[];
   correctAnswer: number | string;
   commentary?: string;

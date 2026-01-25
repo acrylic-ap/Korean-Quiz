@@ -395,8 +395,15 @@ const Section = () => {
                 <button
                   className={`${isCorrect ? "bg-[#D52E7C]" : "bg-[#727272]"} rounded-full w-8 h-8 flex items-center justify-center`}
                   onClick={() => {
-                    const newChoiceDescriptions = new Map(choiceDescriptions);
-                    newChoiceDescriptions.set(index, [description, !isCorrect]);
+                    const newChoiceDescriptions = new Map();
+
+                    choiceDescriptions.forEach(([desc, _], idx) => {
+                      newChoiceDescriptions.set(idx, [
+                        desc,
+                        idx === index ? !isCorrect : false,
+                      ]);
+                    });
+
                     setChoiceDescriptions(newChoiceDescriptions);
                   }}
                 >
@@ -709,10 +716,12 @@ const Footer = () => {
       const handlers = {
         "text-input": () => correctAnswer,
         ox: () => correctAnswerOX,
-        "multiple-choice": () =>
-          Array.from(choiceDescriptions.values())
-            .map(([_, isCorrect], idx) => (isCorrect ? idx + 1 : -1))
-            .filter((idx) => idx !== -1),
+        "multiple-choice": () => {
+          const entries = Array.from(choiceDescriptions.values());
+          const correctIdx = entries.findIndex(([_, isCorrect]) => isCorrect);
+
+          return String(correctIdx + 1);
+        },
       };
 
       const handler = handlers[type.value as keyof typeof handlers];

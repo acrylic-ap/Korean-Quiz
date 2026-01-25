@@ -306,7 +306,7 @@ export const MultipleChoice = ({
   options,
   correctNumber,
 }: {
-  options: string[] | undefined;
+  options: { description: string }[] | undefined;
   correctNumber: number | string;
 }) => {
   if (options === undefined) return null;
@@ -332,7 +332,7 @@ export const MultipleChoice = ({
             disabled={showResult}
           >
             <OptionNumber>{String.fromCharCode(9312 + index)}</OptionNumber>
-            <OptionDescription>{option}</OptionDescription>
+            <OptionDescription>{option.description}</OptionDescription>
           </OptionContentContainer>
         );
       })}
@@ -400,7 +400,11 @@ export default function Section() {
   useEffect(() => {
     if (showResult) return;
 
-    setQuestion(selectQuestion());
+    const getQuestion = async () => {
+      setQuestion(await selectQuestion());
+    };
+
+    getQuestion();
   }, []);
 
   useEffect(() => {
@@ -449,7 +453,8 @@ export default function Section() {
       <QuizContainer>
         <QuizTitleContainer>
           <QuizTitleNumber>
-            {formatNumber(question.questionNumber)}
+            {/* {formatNumber(question.questionNumber)} */}
+            00
             {showResult && (
               <MarkupContainer>
                 {isCorrect ? <CorrectAnswer /> : <WrongAnswer />}

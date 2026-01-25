@@ -145,12 +145,16 @@ export default function ExplanationSheet() {
               <RationaleTitle>오답 보기</RationaleTitle>
               <RationaleBody>
                 {question.rationale?.map((item, index) => (
-                  <RationaleRow key={index}>
-                    <RationaleMarker>
-                      {String.fromCharCode(9312 + index)}
-                    </RationaleMarker>
-                    <RationaleText>{item}</RationaleText>
-                  </RationaleRow>
+                  <>
+                    {item && (
+                      <RationaleRow key={index}>
+                        <RationaleMarker>
+                          {String.fromCharCode(9312 + index)}
+                        </RationaleMarker>
+                        <RationaleText>{item}</RationaleText>
+                      </RationaleRow>
+                    )}
+                  </>
                 ))}
               </RationaleBody>
             </RationaleList>

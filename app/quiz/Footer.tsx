@@ -169,8 +169,8 @@ export default function Footer() {
       type: "danger",
       content: `정말로 넘기시겠습니까?
 기존에 작업한 내용은 저장되지 않습니다!`,
-      onConfirm: () => {
-        setQuestion(selectQuestion());
+      onConfirm: async () => {
+        setQuestion(await selectQuestion());
         setAlertConfig(null);
       },
       onCancel: () => {
@@ -202,10 +202,10 @@ export default function Footer() {
     }
   };
 
-  const nextQuiz = () => {
+  const nextQuiz = async () => {
     setShowResult(false);
     setStarted(true);
-    setQuestion(selectQuestion());
+    setQuestion(await selectQuestion());
   };
 
   const showExplanation = () => {
