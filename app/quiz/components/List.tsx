@@ -137,24 +137,18 @@ export default function List() {
             </ListCloseButton>
 
             <ListButtonContainer>
-              <ListButton>
-                <ListButtonText onClick={showComingSoonModal}>
-                  북마크
-                </ListButtonText>
+              <ListButton onClick={showComingSoonModal}>
+                <ListButtonText>북마크</ListButtonText>
                 <Bookmark />
               </ListButton>
 
-              <ListButton>
-                <ListButtonText onClick={showComingSoonModal}>
-                  카테고리
-                </ListButtonText>
+              <ListButton onClick={showComingSoonModal}>
+                <ListButtonText>카테고리</ListButtonText>
                 <Category />
               </ListButton>
 
-              <ListButton>
-                <ListButtonText onClick={showComingSoonModal}>
-                  도움말
-                </ListButtonText>
+              <ListButton onClick={showComingSoonModal}>
+                <ListButtonText>도움말</ListButtonText>
                 <Help />
               </ListButton>
 
