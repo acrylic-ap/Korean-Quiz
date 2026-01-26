@@ -9,9 +9,9 @@ import {
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { db } from "../lib/client";
-import { parseTextStyle } from "../quiz/tools/parse_text_style";
 import { infoConfigState } from "../atom/quizAtom";
 import { Back } from "@/public/svgs/CategorySVG";
+import { ParsedText } from "../components/ParsedText";
 
 export interface questionData {
   id: string;
@@ -115,15 +115,7 @@ const Section = () => {
             >
               <div key={data.id} className="w-[90%] flex flex-row gap-1">
                 <div className="truncate min-w-0">
-                  {parseTextStyle(data.question).map((part, index) => (
-                    <span
-                      key={index}
-                      className={`text-[#727272]
-                    ${part.bold && "font-bold"} ${part.italic && "italic"}`}
-                    >
-                      {part.text}
-                    </span>
-                  ))}
+                  <ParsedText text={data.question} />
                 </div>
               </div>
               <button

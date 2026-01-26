@@ -20,24 +20,21 @@ import {
 } from "@/app/atom/quizAtom";
 import QuizView from "@/app/components/View";
 import ExplanationSheet from "@/app/components/explanation_sheet/ExplanationSheet";
-import { parseTextStyle } from "@/app/quiz/tools/parse_text_style";
 import { getCircleNumber } from "@/app/tools/getCircleNumber";
 import { Bookmark, DisabledBookmark } from "@/public/svgs/ListSVG";
 import {
   Correct,
-  CorrectAnswer,
   Divider,
   Draw,
   ShowView,
   ToggleTag,
   Write,
   Wrong,
-  WrongAnswer,
 } from "@/public/svgs/QuizSVG";
-import { article } from "framer-motion/client";
 import { useAtom } from "jotai";
 import Image from "next/image";
 import { useState } from "react";
+import { ParsedText } from "@/app/components/ParsedText";
 
 const Header = () => {
   return (
@@ -176,15 +173,7 @@ const Section = () => {
         <div className="w-[90%] mb-10 flex items-center">
           <div className="relative ml-10 text-3xl font-bold">00</div>
           <div className="w-[80%] ml-5 text-2xl">
-            {parseTextStyle(questionTitle).map((part, index) => (
-              <span
-                key={index}
-                className={`text-black
-                    ${part.bold && "font-bold"} ${part.italic && "italic"}`}
-              >
-                {part.text}
-              </span>
-            ))}
+            <ParsedText text={questionTitle} />
             <div
               className="inline-block align-middle ml-1 mb-1"
               onClick={() => setOpenView(true)}

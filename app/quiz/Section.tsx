@@ -24,7 +24,7 @@ import {
 } from "../atom/quizAtom";
 import { useAtom } from "jotai";
 import { selectQuestion } from "./tools/select_question";
-import { parseTextStyle } from "./tools/parse_text_style";
+import { ParsedText } from "../components/ParsedText";
 
 // --- Sub Components (Tailwind 적용) ---
 
@@ -213,14 +213,7 @@ export default function Section() {
             )}
           </div>
           <div className="w-[80%] mt-[10px] ml-5 text-[17pt] font-normal">
-            {parseTextStyle(question.question).map((part, index) => (
-              <span
-                key={index}
-                className={`${part.bold ? "font-bold" : "font-normal"} ${part.italic ? "italic" : "not-italic"}`}
-              >
-                {part.text}
-              </span>
-            ))}
+            <ParsedText text={question.question} />
             <span
               className="inline-block align-middle ml-1 cursor-pointer"
               onClick={() => setOpenView(true)}
