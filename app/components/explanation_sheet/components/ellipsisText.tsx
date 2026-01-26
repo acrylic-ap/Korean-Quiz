@@ -1,14 +1,8 @@
+"use client";
+
 import { infoConfigState } from "@/app/atom/quizAtom";
 import { useAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
-import { styled } from "styled-components";
-
-const AnswerValue = styled.p<{ $clickable: boolean }>`
-  font-size: 14pt;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
 
 export const EllipsisText = ({ text }: { text: string }) => {
   const ref = useRef<HTMLParagraphElement>(null);
@@ -19,6 +13,7 @@ export const EllipsisText = ({ text }: { text: string }) => {
     if (!ref.current) return;
 
     const el = ref.current;
+    // 텍스트가 컨테이너보다 길면 말줄임표가 생겼다고 판단
     setIsEllipsis(el.scrollWidth > el.clientWidth);
   }, [text]);
 
@@ -34,8 +29,14 @@ export const EllipsisText = ({ text }: { text: string }) => {
   };
 
   return (
-    <AnswerValue ref={ref} $clickable={isEllipsis} onClick={handleClick}>
+    <p
+      ref={ref}
+      onClick={handleClick}
+      className={`text-[14pt] whitespace-nowrap overflow-hidden text-ellipsis font-normal
+        ${isEllipsis ? "cursor-pointer" : "cursor-default"}
+      `}
+    >
       {text}
-    </AnswerValue>
+    </p>
   );
 };

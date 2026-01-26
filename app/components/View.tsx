@@ -1,141 +1,11 @@
 "use client";
 
-import { openViewState, questionState } from "@/app/atom/quizAtom";
+import { openViewState } from "@/app/atom/quizAtom";
 import { Close } from "@/public/svgs/ListSVG";
 import { useAtom } from "jotai";
 import Image from "next/image";
 import { useState } from "react";
 import { getTrackBackground, Range } from "react-range";
-import styled from "styled-components";
-
-const OverlayView = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-
-  z-index: 1;
-`;
-
-const ViewContent = styled.div<{ $opacity: number }>`
-  background-color: white;
-  opacity: ${({ $opacity }) => `${$opacity}%`};
-
-  width: 90%;
-  height: 45%;
-
-  box-shadow: 3px 3px 10px 0px #d6d6d6;
-
-  display: flex;
-  align-items: flex-end;
-  flex-direction: column;
-`;
-
-const ViewHeader = styled.header`
-  width: 100%;
-  height: 15%;
-
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-const CloseButton = styled.button`
-  background-color: transparent;
-
-  width: 50px;
-  height: 50px;
-
-  border: none;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  color: black;
-`;
-
-const ViewSection = styled.section`
-  width: 100%;
-  height: 70%;
-
-  padding-top: 5%;
-
-  display: flex;
-  justify-content: center;
-`;
-
-const ViewFooter = styled.footer`
-  position: relative;
-
-  width: 100%;
-  height: 15%;
-`;
-
-const SliderContainer = styled.div`
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  transform: translate(0%, -50%);
-`;
-
-const SizeButtonContainer = styled.div`
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translate(0%, -50%);
-`;
-
-const SizeButton = styled.button`
-  background-color: transparent;
-
-  padding: 0 10px;
-
-  border: none;
-  border-radius: 3px;
-
-  font-size: 17pt;
-
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-
-  color: black;
-`;
-
-const ImageContainer = styled.div<{ $imageSize: number }>`
-  position: relative;
-  width: ${({ $imageSize }) => `${$imageSize}%`};
-  height: 100%;
-`;
-
-const Article = styled.div<{ $fontSize: number }>`
-  width: 100%;
-  height: 95%;
-
-  padding: 0 20px;
-
-  font-size: ${({ $fontSize }) => `${$fontSize}pt`};
-
-  overflow-y: auto;
-
-  white-space: break-spaces;
-
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-`;
 
 export default function QuizView({
   article,
@@ -145,66 +15,75 @@ export default function QuizView({
   image?: any;
 }) {
   const [openView, setOpenView] = useAtom(openViewState);
-
   const [opacity, setOpacity] = useState([80]);
+  const [fontSize, setFontSize] = useState(15);
+  const [imageSize, setImageSize] = useState(90);
 
   const STEP_OPACITY = 0.1;
   const MIN_OPACITY = 20;
   const MAX_OPACITY = 100;
 
-  const [fontSize, setFontSize] = useState(15);
-
   const changeFontSize = (type: "+" | "-") => {
     const MIN_FONT_SIZE = 10;
     const MAX_FONT_SIZE = 40;
-
     const delta = type === "+" ? 2 : -2;
     const newSize = fontSize + delta;
-
-    if (newSize < MIN_FONT_SIZE || newSize > MAX_FONT_SIZE) return;
-    setFontSize(newSize);
+    if (newSize >= MIN_FONT_SIZE && newSize <= MAX_FONT_SIZE)
+      setFontSize(newSize);
   };
-
-  const [imageSize, setImageSize] = useState(90);
 
   const changeImageSize = (type: "+" | "-") => {
     const MIN_IMAGE_SIZE = 50;
     const MAX_IMAGE_SIZE = 90;
-
     const delta = type === "+" ? 10 : -10;
     const newSize = imageSize + delta;
-
-    if (newSize < MIN_IMAGE_SIZE || newSize > MAX_IMAGE_SIZE) return;
-
-    setImageSize(newSize);
+    if (newSize >= MIN_IMAGE_SIZE && newSize <= MAX_IMAGE_SIZE)
+      setImageSize(newSize);
   };
 
-  if (!openView || (!image && !article)) return false;
+  if (!openView || (!image && !article)) return null;
 
   return (
-    <OverlayView>
-      <ViewContent $opacity={opacity[0]}>
-        <ViewHeader>
-          <CloseButton onClick={() => setOpenView(false)}>
+    /* OverlayView: 배경 */
+    <div className="fixed inset-0 w-full h-full flex flex-col items-center justify-center z-[100] bg-black/10">
+      {/* ViewContent: 메인 팝업창 */}
+      <div
+        style={{ opacity: `${opacity[0]}%` }}
+        className="w-[90%] h-[45%] bg-white shadow-[3px_3px_10px_0px_#d6d6d6] flex flex-col items-end overflow-hidden rounded-lg"
+      >
+        {/* ViewHeader */}
+        <header className="w-full h-[15%] flex items-center justify-end">
+          <button
+            onClick={() => setOpenView(false)}
+            className="w-[50px] h-[50px] flex items-center justify-center bg-transparent border-none text-black active:opacity-50"
+          >
             <Close />
-          </CloseButton>
-        </ViewHeader>
-        <ViewSection>
+          </button>
+        </header>
+
+        {/* ViewSection: 본문 영역 */}
+        <section className="w-full h-[70%] pt-[5%] flex justify-center overflow-hidden">
           {article ? (
-            <Article $fontSize={fontSize}>{article}</Article>
+            <div
+              style={{ fontSize: `${fontSize}pt` }}
+              className="w-full h-[95%] px-5 whitespace-pre-wrap overflow-y-auto scrollbar-hide font-normal"
+            >
+              {article}
+            </div>
           ) : (
-            <ImageContainer $imageSize={imageSize}>
-              <Image
-                src={image}
-                alt="사진"
-                fill
-                style={{ objectFit: "contain" }}
-              />
-            </ImageContainer>
+            <div
+              style={{ width: `${imageSize}%` }}
+              className="relative h-full transition-all duration-200"
+            >
+              <Image src={image} alt="사진" fill className="object-contain" />
+            </div>
           )}
-        </ViewSection>
-        <ViewFooter>
-          <SliderContainer>
+        </section>
+
+        {/* ViewFooter: 하단 도구 모음 */}
+        <footer className="relative w-full h-[15%] flex items-center px-5 justify-between">
+          {/* SliderContainer: 투명도 조절 */}
+          <div className="flex items-center">
             <Range
               values={opacity}
               step={STEP_OPACITY}
@@ -225,6 +104,7 @@ export default function QuizView({
                       max: MAX_OPACITY,
                     }),
                   }}
+                  className="rounded-full"
                 >
                   {children}
                 </div>
@@ -232,37 +112,34 @@ export default function QuizView({
               renderThumb={({ props }) => (
                 <div
                   {...props}
-                  style={{
-                    ...props.style,
-                    height: "20px",
-                    width: "20px",
-                    backgroundColor: "#FFF",
-                    borderRadius: "100px",
-                    boxShadow: "0px 1px 5px #AAA",
-                    outline: "none",
-                  }}
+                  style={{ ...props.style }}
+                  className="h-5 w-5 bg-white rounded-full shadow-[0px_1px_5px_#AAA] outline-none border-none"
                 />
               )}
             />
-          </SliderContainer>
-          <SizeButtonContainer>
-            <SizeButton
+          </div>
+
+          {/* SizeButtonContainer: 크기 조절 버튼 */}
+          <div className="flex space-x-2">
+            <button
               onClick={() =>
                 article ? changeFontSize("+") : changeImageSize("+")
               }
+              className="px-3 py-1 text-[17pt] font-normal text-black bg-transparent active:bg-gray-100 rounded select-none"
             >
               +
-            </SizeButton>
-            <SizeButton
+            </button>
+            <button
               onClick={() =>
                 article ? changeFontSize("-") : changeImageSize("-")
               }
+              className="px-3 py-1 text-[17pt] font-normal text-black bg-transparent active:bg-gray-100 rounded select-none"
             >
               -
-            </SizeButton>
-          </SizeButtonContainer>
-        </ViewFooter>
-      </ViewContent>
-    </OverlayView>
+            </button>
+          </div>
+        </footer>
+      </div>
+    </div>
   );
 }

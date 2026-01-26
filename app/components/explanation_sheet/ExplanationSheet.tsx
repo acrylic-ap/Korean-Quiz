@@ -1,110 +1,11 @@
+"use client";
+
 import { openExplanationSheetState } from "@/app/atom/quizAtom";
 import { useAtom } from "jotai";
-import styled from "styled-components";
-
 import { Drawer } from "vaul";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { EllipsisText } from "./components/ellipsisText";
 import InfoModal from "@/app/components/InfoModal";
-
-const Overlay = styled(Drawer.Overlay)`
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-
-  z-index: 20;
-`;
-
-const Content = styled(Drawer.Content)`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-
-  background: white;
-  border-radius: 16px 16px 0 0;
-  padding: 16px;
-
-  z-index: 20;
-`;
-
-const AnswerComparison = styled.div`
-  position: relative;
-  width: 100%;
-  height: 60px;
-
-  display: flex;
-  justify-content: center;
-`;
-
-const AnswerCard = styled.div`
-  width: 45%;
-  height: 50px;
-
-  margin: 10px;
-
-  border: 1px solid black;
-  border-radius: 5px;
-
-  display: flex;
-  align-items: center;
-`;
-
-const AnswerTitle = styled.p`
-  margin: 10px;
-
-  font-size: 15pt;
-
-  white-space: nowrap;
-`;
-
-const AnswerValue = styled.p`
-  font-size: 14pt;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-const Title = styled.p`
-  font-size: 19pt;
-
-  padding: 0 10px;
-`;
-
-const Commentary = styled.p`
-  font-size: 15pt;
-
-  padding: 0 20px;
-`;
-
-const RationaleList = styled.div``;
-
-const RationaleTitle = styled(Title)`
-  font-size: 17pt;
-`;
-
-const RationaleBody = styled.div`
-  margin: 0 10px;
-`;
-
-const RationaleRow = styled.div`
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-
-  padding: 0 10px;
-
-  margin-bottom: 10px;
-`;
-
-const RationaleMarker = styled.p`
-  margin: 0;
-  margin-right: 5px;
-`;
-
-const RationaleText = styled.p`
-  margin: 0;
-`;
 
 export default function ExplanationSheet({
   commentary,
@@ -122,51 +23,70 @@ export default function ExplanationSheet({
   return (
     <Drawer.Root open={open} onOpenChange={setOpen}>
       <Drawer.Portal>
-        <Overlay />
-        <Content>
+        {/* Overlay: rgba(0, 0, 0, 0.4)는 bg-black/40으로 컷 */}
+        <Drawer.Overlay className="fixed inset-0 bg-black/40 z-20" />
+
+        {/* Content: 하단 고정 서랍 레이아웃 */}
+        <Drawer.Content className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[16px] p-4 z-20 outline-none">
           <VisuallyHidden>
             <Drawer.Title>해설</Drawer.Title>
-            <Drawer.Description>해설</Drawer.Description>
+            <Drawer.Description>해설 내용입니다.</Drawer.Description>
           </VisuallyHidden>
 
-          <AnswerComparison>
-            <AnswerCard>
-              <AnswerTitle>정답</AnswerTitle>
-              <AnswerValue>{correctAnswer}</AnswerValue>
-            </AnswerCard>
+          {/* AnswerComparison: 정답 vs 내 답 비교 섹션 */}
+          <div className="relative w-full h-[60px] flex justify-center mb-4">
+            <div className="w-[45%] h-[50px] m-[10px] border border-black rounded-[5px] flex items-center px-2">
+              <p className="m-[10px] text-[15pt] whitespace-nowrap font-normal">
+                정답
+              </p>
+              <p className="text-[14pt] whitespace-nowrap overflow-hidden text-ellipsis font-normal">
+                {correctAnswer}
+              </p>
+            </div>
+
             {answer && (
-              <AnswerCard>
-                <AnswerTitle>내 답</AnswerTitle>
-                <EllipsisText text={answer} />
-              </AnswerCard>
+              <div className="w-[45%] h-[50px] m-[10px] border border-black rounded-[5px] flex items-center px-2">
+                <p className="m-[10px] text-[15pt] whitespace-nowrap font-normal">
+                  내 답
+                </p>
+                <div className="overflow-hidden">
+                  <EllipsisText text={answer} />
+                </div>
+              </div>
             )}
-          </AnswerComparison>
+          </div>
 
-          <Title>해설</Title>
-          <Commentary>
+          {/* 메인 해설 섹션 */}
+          <h2 className="text-[19pt] px-[10px] font-normal">해설</h2>
+          <p className="text-[15pt] px-5 mt-2 font-normal leading-relaxed">
             {commentary ?? "하단에 있는 오답 보기를 확인해 주세요!"}
-          </Commentary>
+          </p>
 
+          {/* RationaleList: 선지별 상세 설명 */}
           {rationale && rationale.some((item) => item?.trim()) && (
-            <RationaleList>
-              <RationaleTitle>선지별 설명</RationaleTitle>
-              <RationaleBody>
-                {rationale?.map((item, index) => (
-                  <>
-                    {item && (
-                      <RationaleRow key={index}>
-                        <RationaleMarker>
+            <div className="mt-6">
+              <h3 className="text-[17pt] px-[10px] font-normal">선지별 설명</h3>
+              <div className="mx-[10px] mt-3">
+                {rationale.map(
+                  (item, index) =>
+                    item && (
+                      <div
+                        key={index}
+                        className="flex items-start justify-start px-[10px] mb-[10px]"
+                      >
+                        <span className="mr-[5px] shrink-0 font-normal">
                           {String.fromCharCode(9312 + index)}
-                        </RationaleMarker>
-                        <RationaleText>{item}</RationaleText>
-                      </RationaleRow>
-                    )}
-                  </>
-                ))}
-              </RationaleBody>
-            </RationaleList>
+                        </span>
+                        <p className="m-0 text-[14pt] font-normal leading-snug">
+                          {item}
+                        </p>
+                      </div>
+                    ),
+                )}
+              </div>
+            </div>
           )}
-        </Content>
+        </Drawer.Content>
 
         <InfoModal />
       </Drawer.Portal>

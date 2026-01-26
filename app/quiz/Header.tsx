@@ -1,6 +1,5 @@
 "use client";
 
-import styled from "styled-components";
 import Image from "next/image";
 import { ListIcon, PauseIcon, PlayIcon } from "@/public/svgs/HeaderSVG";
 import { useEffect } from "react";
@@ -12,67 +11,6 @@ import {
   timeState,
 } from "../atom/quizAtom";
 import { useAtom } from "jotai";
-
-const QuizHeader = styled.div`
-  width: 100%;
-  height: 10%;
-
-  display: flex;
-  align-items: center;
-`;
-
-const LogoContainer = styled.div`
-  width: 25%;
-`;
-
-const Logo = styled.div`
-  position: relative;
-
-  margin-left: 15px;
-`;
-
-const TimeContainer = styled.div`
-  width: 55%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Time = styled.p`
-  font-size: 15pt;
-`;
-
-const TimeControl = styled.div`
-  display: flex;
-  align-items: center;
-
-  margin-left: 10px;
-`;
-
-const ListContainer = styled.div`
-  width: 20%;
-
-  display: flex;
-  justify-content: flex-end;
-`;
-
-const ListButton = styled.button`
-  background-color: transparent;
-
-  width: 40px;
-  height: 40px;
-
-  margin-right: 15px;
-
-  border: none;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  color: black;
-`;
 
 export default function Header() {
   const [time, setTime] = useAtom(timeState);
@@ -90,7 +28,7 @@ export default function Header() {
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [started]);
+  }, [started, setTime]);
 
   const listOpening = () => {
     setListOpen(true);
@@ -98,32 +36,47 @@ export default function Header() {
   };
 
   return (
-    <QuizHeader>
-      <LogoContainer>
-        <Logo>
+    // QuizHeader: h-[10%]는 부모 높이에 의존하므로 유지, flex 정렬
+    <header className="flex items-center w-full h-[10%]">
+      {/* LogoContainer (25%) */}
+      <div className="w-1/4">
+        <div className="relative ml-[15px]">
           <Image
             src="/images/logo/Logo.png"
             alt="평명"
             width={80}
             height={30}
-            style={{ objectFit: "contain" }}
+            className="object-contain"
             priority
           />
-        </Logo>
-      </LogoContainer>
-      <TimeContainer>
-        <Time>{formatTime(time)}</Time>
+        </div>
+      </div>
+
+      {/* TimeContainer (55%) */}
+      <div className="w-[55%] flex justify-center items-center">
+        {/* Time (15pt -> text-xl로 근사치 조정) */}
+        <p className="text-xl tabular-nums">{formatTime(time)}</p>
+
         {!showResult && (
-          <TimeControl onClick={() => setStarted(!started)}>
+          <button
+            className="flex items-center ml-[10px] cursor-pointer"
+            onClick={() => setStarted(!started)}
+          >
             {started ? <PauseIcon /> : <PlayIcon />}
-          </TimeControl>
+          </button>
         )}
-      </TimeContainer>
-      <ListContainer>
-        <ListButton onClick={() => listOpening()}>
+      </div>
+
+      {/* ListContainer (20%) */}
+      <div className="w-1/5 flex justify-end">
+        {/* ListButton */}
+        <button
+          className="flex justify-center items-center w-10 h-10 mr-[15px] bg-transparent text-black"
+          onClick={listOpening}
+        >
           <ListIcon />
-        </ListButton>
-      </ListContainer>
-    </QuizHeader>
+        </button>
+      </div>
+    </header>
   );
 }

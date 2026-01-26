@@ -1,5 +1,4 @@
 "use client";
-import "@/app/tailwind.css";
 
 import {
   Listbox,

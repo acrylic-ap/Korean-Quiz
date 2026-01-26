@@ -1,6 +1,5 @@
 "use client";
 
-import styled from "styled-components";
 import {
   answerState,
   confirmConfigState,
@@ -16,99 +15,6 @@ import { useAtom } from "jotai";
 import { selectQuestion } from "./tools/select_question";
 import { Clue } from "@/public/svgs/QuizSVG";
 
-const QuizFooter = styled.div<{ $started: boolean; $showResult: boolean }>`
-  position: relative;
-
-  width: 100%;
-  height: 10%;
-
-  display: ${({ $started, $showResult }) =>
-    $started || $showResult ? "block" : "none"};
-  justify-content: center;
-  align-items: flex-end;
-`;
-
-const Button = styled.button`
-  position: absolute;
-  bottom: 15px;
-
-  background-color: transparent;
-
-  width: 25%;
-  height: 50px;
-
-  border: 1px solid #000;
-  border-radius: 5px;
-
-  font-size: 20px;
-
-  color: black;
-`;
-
-const SkipButton = styled(Button)`
-  right: 10px;
-`;
-
-const HintContainer = styled.div`
-  position: absolute;
-  left: 10px;
-  bottom: 0;
-
-  width: 25%;
-  height: 50px;
-`;
-
-const HintButton = styled(Button)`
-  position: relative;
-
-  width: 100%;
-  height: 100%;
-
-  margin: none;
-`;
-
-const HintContent = styled.div`
-  position: absolute;
-  top: -60px;
-
-  width: 100%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-`;
-
-const HintCount = styled.p`
-  margin-left: 5px;
-
-  font-size: 14pt;
-`;
-
-const AnswerButton = styled(Button)`
-  right: 50%;
-
-  width: 40%;
-
-  transform: translate(50%, 0%);
-`;
-
-const NextButton = styled(Button)`
-  background-color: #e04e92;
-
-  left: 10px;
-
-  width: 45%;
-
-  color: white;
-`;
-
-const ExplanationButton = styled(Button)`
-  right: 10px;
-
-  width: 45%;
-`;
-
 export default function Footer() {
   const [hintCount, setHintCount] = useAtom(hintCountState);
   const [showResult, setShowResult] = useAtom(showResultState);
@@ -122,22 +28,18 @@ export default function Footer() {
   const [, setInfoConfig] = useAtom(infoConfigState);
   const [, setQuestion] = useAtom(questionState);
 
+  // --- Logic Functions ---
   const showHint = () => {
     if (!hint) {
       setInfoConfig({
         content: "힌트가 없습니다.",
-        onClose: () => {
-          setInfoConfig(null);
-        },
+        onClose: () => setInfoConfig(null),
       });
     } else {
       setHintCount(hintCount - 1);
-
       setInfoConfig({
         content: hint,
-        onClose: () => {
-          setInfoConfig(null);
-        },
+        onClose: () => setInfoConfig(null),
       });
     }
   };
@@ -146,9 +48,7 @@ export default function Footer() {
     if (!answer) {
       setInfoConfig({
         content: "정답을 입력하거나 고르세요.",
-        onClose: () => {
-          setInfoConfig(null);
-        },
+        onClose: () => setInfoConfig(null),
       });
     } else {
       setAlertConfig({
@@ -158,9 +58,7 @@ export default function Footer() {
           setShowResult(true);
           setStarted(false);
         },
-        onCancel: () => {
-          setAlertConfig(null);
-        },
+        onCancel: () => setAlertConfig(null),
       });
     }
   };
@@ -168,15 +66,12 @@ export default function Footer() {
   const passCheck = () => {
     setAlertConfig({
       type: "danger",
-      content: `정말로 넘기시겠습니까?
-기존에 작업한 내용은 저장되지 않습니다!`,
+      content: `정말로 넘기시겠습니까?\n기존에 작업한 내용은 저장되지 않습니다!`,
       onConfirm: async () => {
         setQuestion(await selectQuestion());
         setAlertConfig(null);
       },
-      onCancel: () => {
-        setAlertConfig(null);
-      },
+      onCancel: () => setAlertConfig(null),
     });
   };
 
@@ -184,21 +79,16 @@ export default function Footer() {
     if (hintCount <= 0) {
       setInfoConfig({
         content: "사용 가능한 힌트가 없습니다.",
-        onClose: () => {
-          setInfoConfig(null);
-        },
+        onClose: () => setInfoConfig(null),
       });
     } else {
       setAlertConfig({
-        content: `정말로 힌트를 사용하시겠습니까?
-현재 볼 수 있는 힌트는 ${hintCount}개입니다.`,
+        content: `정말로 힌트를 사용하시겠습니까?\n현재 볼 수 있는 힌트는 ${hintCount}개입니다.`,
         onConfirm: () => {
           showHint();
           setAlertConfig(null);
         },
-        onCancel: () => {
-          setAlertConfig(null);
-        },
+        onCancel: () => setAlertConfig(null),
       });
     }
   };
@@ -214,25 +104,63 @@ export default function Footer() {
   };
 
   return (
-    <QuizFooter $started={started} $showResult={showResult}>
+    <footer
+      className={`relative w-full h-[10%] items-end pb-[15px] 
+      ${started || showResult ? "flex" : "hidden"}`}
+    >
       {!showResult ? (
-        <>
-          <HintContainer>
-            <HintContent>
+        <div className="relative w-full h-full px-[10px]">
+          {/* 힌트 버튼 섹션 (좌측) */}
+          <div className="absolute left-[10px] bottom-0 w-[25%] h-[50px]">
+            {/* 힌트 카운트 말풍선 */}
+            <div className="absolute top-[-35px] left-0 w-full flex items-center justify-center space-x-1">
               <Clue />
-              <HintCount>{hintCount}</HintCount>
-            </HintContent>
-            <HintButton onClick={hintCheck}>힌트</HintButton>
-          </HintContainer>
-          <AnswerButton onClick={answerCheck}>정답 확인</AnswerButton>
-          <SkipButton onClick={passCheck}>넘기기</SkipButton>
-        </>
+              <span className="text-[14pt] tabular-nums font-medium">
+                {hintCount}
+              </span>
+            </div>
+            <button
+              onClick={hintCheck}
+              className="w-full h-full border border-black rounded-[5px] text-[20px] text-black bg-transparent active:bg-gray-100 transition-colors"
+            >
+              힌트
+            </button>
+          </div>
+
+          {/* 정답 확인 버튼 (중앙) */}
+          <button
+            onClick={answerCheck}
+            className="absolute left-1/2 bottom-0 -translate-x-1/2 w-[40%] h-[50px] border border-black rounded-[5px] text-[20px] text-black bg-transparent active:bg-gray-100 transition-colors"
+          >
+            정답 확인
+          </button>
+
+          {/* 넘기기 버튼 (우측) */}
+          <button
+            onClick={passCheck}
+            className="absolute right-[10px] bottom-0 w-[25%] h-[50px] border border-black rounded-[5px] text-[20px] text-black bg-transparent active:bg-gray-100 transition-colors"
+          >
+            넘기기
+          </button>
+        </div>
       ) : (
-        <>
-          <NextButton onClick={nextQuiz}>다음 문제</NextButton>
-          <ExplanationButton onClick={showExplanation}>해설</ExplanationButton>
-        </>
+        <div className="w-full h-[50px] px-[10px] flex gap-[10px]">
+          {/* 다음 문제 버튼 (핑크 포인트) */}
+          <button
+            onClick={nextQuiz}
+            className="flex-1 h-full bg-[#e04e92] text-white rounded-[5px] text-[20px] active:opacity-90 transition-opacity"
+          >
+            다음 문제
+          </button>
+          {/* 해설 버튼 */}
+          <button
+            onClick={showExplanation}
+            className="flex-1 h-full border border-black rounded-[5px] text-[20px] text-black bg-transparent active:bg-gray-50 transition-colors"
+          >
+            해설
+          </button>
+        </div>
       )}
-    </QuizFooter>
+    </footer>
   );
 }

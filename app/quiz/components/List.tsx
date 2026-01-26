@@ -17,91 +17,10 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { useAtom } from "jotai";
 import Link from "next/link";
-import styled from "styled-components";
-
-const QuizList = styled(motion.div)`
-  background-color: rgba(0, 0, 0, 0.5);
-
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 100%;
-
-  display: flex;
-  flex-direction: column;
-
-  z-index: 1;
-`;
-
-const ListContainer = styled(motion.div)`
-  background-color: white;
-
-  position: absolute;
-  top: 0;
-  right: 0;
-
-  width: 35%;
-  height: 100%;
-
-  display: flex;
-  align-items: flex-end;
-  flex-direction: column;
-`;
-
-const ListCloseButton = styled.button`
-  background-color: transparent;
-
-  width: 50px;
-  height: 50px;
-
-  border: none;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ListButtonContainer = styled.div`
-  width: 100%;
-
-  margin-top: 20px;
-
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-end;
-  flex-direction: column;
-`;
-
-const ListButton = styled.button`
-  background-color: transparent;
-  border: none;
-
-  display: flex;
-  align-items: center;
-
-  margin-right: 15px;
-  margin-bottom: 5px;
-`;
-
-const ListButtonLink = styled(Link)`
-  text-decoration: none;
-`;
-
-const ListButtonText = styled.p`
-  font-size: 13pt;
-  font-weight: 400;
-  color: black;
-
-  margin-right: 12px;
-`;
 
 export default function List() {
   const [listOpen, setListOpen] = useAtom(listOpenState);
-
   const [showResult] = useAtom(showResultState);
-
   const [, setStarted] = useAtom(startedState);
   const [, setInfoConfig] = useAtom(infoConfigState);
 
@@ -113,62 +32,74 @@ export default function List() {
   const showComingSoonModal = () => {
     setInfoConfig({
       content: "추후에 구현될 예정입니다.",
-      onClose: () => {
-        setInfoConfig(null);
-      },
+      onClose: () => setInfoConfig(null),
     });
   };
+
+  const linkButtonStyle = `flex items-center mr-[15px] mb-6 bg-transparent border-none group`;
+  const linkTextStyle = `text-[13pt] font-normal text-black mr-3 group-active:text-gray-400`;
 
   return (
     <AnimatePresence>
       {listOpen && (
-        <QuizList
+        /* QuizList: Overlay 배경 */
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 flex flex-col z-[100]"
+          onClick={listClosing} // 배경 클릭 시 닫기 추가 (사용성)
         >
-          <ListContainer
+          {/* ListContainer: 사이드바 본체 */}
+          <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="absolute top-0 right-0 w-[35%] h-full bg-white flex flex-col items-end shadow-2xl"
+            onClick={(e) => e.stopPropagation()} // 클릭 이벤트 전파 방지
           >
-            <ListCloseButton onClick={() => listClosing()}>
+            {/* ListCloseButton */}
+            <button
+              onClick={listClosing}
+              className="w-[50px] h-[50px] flex justify-center items-center bg-transparent border-none text-black active:opacity-50"
+            >
               <Close />
-            </ListCloseButton>
+            </button>
 
-            <ListButtonContainer>
-              <ListButton onClick={showComingSoonModal}>
-                <ListButtonText>북마크</ListButtonText>
+            {/* ListButtonContainer */}
+            <div className="w-full mt-5 flex flex-col items-end justify-start">
+              <button onClick={showComingSoonModal} className={linkButtonStyle}>
+                <span className={linkTextStyle}>북마크</span>
                 <Bookmark />
-              </ListButton>
+              </button>
 
-              <ListButton onClick={showComingSoonModal}>
-                <ListButtonText>카테고리</ListButtonText>
+              <button onClick={showComingSoonModal} className={linkButtonStyle}>
+                <span className={linkTextStyle}>카테고리</span>
                 <Category />
-              </ListButton>
+              </button>
 
-              <ListButton onClick={showComingSoonModal}>
-                <ListButtonText>도움말</ListButtonText>
+              <button onClick={showComingSoonModal} className={linkButtonStyle}>
+                <span className={linkTextStyle}>도움말</span>
                 <Help />
-              </ListButton>
+              </button>
 
-              <ListButtonLink href="make_quiz">
-                <ListButton>
-                  <ListButtonText>문제 추가</ListButtonText>
+              <Link href="make_quiz" className="no-underline">
+                <div className={linkButtonStyle}>
+                  <span className={linkTextStyle}>문제 추가</span>
                   <MakeQuizIcon />
-                </ListButton>
-              </ListButtonLink>
+                </div>
+              </Link>
 
-              <ListButtonLink href="requested_admin">
-                <ListButton>
-                  <ListButtonText>문제 승인</ListButtonText>
+              <Link href="requested_admin" className="no-underline">
+                <div className={linkButtonStyle}>
+                  <span className={linkTextStyle}>문제 승인</span>
                   <Approve />
-                </ListButton>
-              </ListButtonLink>
-            </ListButtonContainer>
-          </ListContainer>
-        </QuizList>
+                </div>
+              </Link>
+            </div>
+          </motion.div>
+        </motion.div>
       )}
     </AnimatePresence>
   );

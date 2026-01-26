@@ -2,7 +2,6 @@
 import {
   articleAtom,
   choiceDescriptionAtom,
-  choiceExplanationAtom,
   correctAnswerAtom,
   correctAnswerOXAtom,
   explanationAtom,

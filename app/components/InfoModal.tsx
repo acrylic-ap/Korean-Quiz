@@ -1,85 +1,9 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { styled } from "styled-components";
 import { infoConfigState } from "../atom/quizAtom";
 import Image from "next/image";
 import { Close } from "@/public/svgs/ListSVG";
-
-// Quiz.tsx (또는 별도 Modal 컴포넌트)
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  pointer-events: auto !important;
-`;
-
-const ModalContent = styled.div`
-  position: relative;
-
-  width: 80%;
-  background-color: white;
-  border-radius: 10px;
-  padding: 20px;
-  /* RN 변환을 위해 그림자 스타일도 미리 넣어두면 좋습니다 */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-`;
-
-const ModalCloseButton = styled.button`
-  background-color: transparent;
-
-  position: absolute;
-  top: 12px;
-  right: 10px;
-
-  width: 50px;
-  height: 50px;
-
-  border: none;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const LogoContainer = styled.div`
-  margin-top: 5px;
-  margin-left: 5px;
-`;
-
-const ContentText = styled.p`
-  margin: 0 20px;
-  margin-top: 30px;
-
-  color: #333;
-  font-size: 20px;
-  text-align: center;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
-`;
-
-const ButtonContainer = styled.div`
-  margin-top: 30px;
-  margin-right: 10px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-`;
-
-const Button = styled.button`
-  background-color: transparent;
-  padding: 11px 20px;
-  border: 1px solid #333;
-  border-radius: 5px;
-  font-size: 16px;
-`;
 
 export default function InfoModal() {
   const [infoModalProps] = useAtom(infoConfigState);
@@ -87,34 +11,54 @@ export default function InfoModal() {
   if (!infoModalProps) return null;
 
   return (
-    <ModalOverlay
+    /* ModalOverlay: fixed로 화면 전체 고정 및 클릭 시 닫기 */
+    <div
+      className="fixed inset-0 w-full h-full bg-black/50 flex justify-center items-center z-[999] pointer-events-auto"
       onClick={(e) => {
         e.stopPropagation();
         infoModalProps.onClose();
       }}
     >
-      <ModalContent onClick={(e) => e.stopPropagation()}>
-        <ModalCloseButton onClick={() => infoModalProps.onClose()}>
+      {/* ModalContent */}
+      <div
+        className="relative w-[80%] bg-white rounded-[10px] p-5 shadow-[0_4px_6px_rgba(0,0,0,0.1)]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* ModalCloseButton */}
+        <button
+          onClick={() => infoModalProps.onClose()}
+          className="absolute top-3 right-[10px] w-[50px] h-[50px] flex justify-center items-center bg-transparent border-none text-black active:opacity-50"
+        >
           <Close />
-        </ModalCloseButton>
+        </button>
 
-        <LogoContainer>
+        {/* LogoContainer */}
+        <div className="mt-[5px] ml-[5px]">
           <Image
             src="/images/logo/Logo.png"
             alt="평명"
             width={67}
             height={27}
-            style={{ objectFit: "contain" }}
+            className="object-contain"
             priority
           />
-        </LogoContainer>
+        </div>
 
-        <ContentText>{infoModalProps.content}</ContentText>
+        {/* ContentText: 긴 텍스트 대응을 위해 break-words 추가 */}
+        <p className="mt-[30px] mx-5 text-[#333] text-[20px] text-center whitespace-pre-wrap break-words font-normal leading-snug">
+          {infoModalProps.content}
+        </p>
 
-        <ButtonContainer>
-          <Button onClick={() => infoModalProps.onClose()}>확인</Button>
-        </ButtonContainer>
-      </ModalContent>
-    </ModalOverlay>
+        {/* ButtonContainer */}
+        <div className="mt-[30px] mr-[10px] flex justify-end">
+          <button
+            onClick={() => infoModalProps.onClose()}
+            className="px-5 py-[11px] border border-[#333] rounded-[5px] text-[16px] font-normal bg-transparent active:bg-gray-100 transition-colors"
+          >
+            확인
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
