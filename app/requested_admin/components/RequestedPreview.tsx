@@ -44,7 +44,7 @@ export const MultipleChoice = ({
   options,
   correctAnswer,
 }: {
-  options: { description: string }[];
+  options: { description: string }[] | undefined;
   correctAnswer: string | undefined;
 }) => {
   // options, correctNumber
@@ -80,7 +80,7 @@ export const TextInput = ({
   guide: string | undefined;
   correctAnswer: string | undefined;
 }) => {
-  if (!guide || !correctAnswer) return;
+  if (!correctAnswer) return;
 
   return (
     <div className="w-full flex justify-center flex-col">
@@ -147,8 +147,6 @@ const Section = ({
   const [tagActive, setTagActive] = useState(false);
 
   const [, setOpenView] = useAtom(openViewState);
-
-  if (!options) return;
 
   return (
     <div className="w-full h-[75%]">
