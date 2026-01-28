@@ -54,9 +54,12 @@ export const MultipleChoice = ({
   return (
     <div className="ml-10 flex flex-col">
       {options.map((option, index) => {
+        const number = index + 1;
+        const correct = Number(correctAnswer) === number;
+
         return (
           <div
-            className={`w-[90%] flex items-start mb-5 ${correctAnswer === String(index) ? "text-[#E04E92]" : "text-black"}`}
+            className={`w-[90%] flex items-start mb-5 ${correct ? "text-[#E04E92]" : "text-black"}`}
             key={index}
           >
             <div className="mr-2 text-xl shrink-0">
