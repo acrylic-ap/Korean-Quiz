@@ -58,7 +58,7 @@ export default function ExplanationSheet({
 
           {/* 메인 해설 섹션 */}
           <h2 className="text-[19pt] px-[10px] font-normal">해설</h2>
-          <p className="text-[15pt] px-5 mt-2 font-normal leading-relaxed">
+          <p className="text-[15pt] px-5 mt-2 font-normal leading-relaxed whitespace-pre-wrap">
             {commentary ?? "하단에 있는 오답 보기를 확인해 주세요!"}
           </p>
 
